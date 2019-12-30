@@ -1,0 +1,222 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="format-detection" content="telephone=no">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
+	<title>DEMO</title>
+	<!--css-->
+	<link href="/static/css/style.min.css" rel="stylesheet" media="all">
+	<!-- Favicons -->
+	<link rel="icon" href="img/favicon.png" type="image/vnd.microsoft.icon">
+
+	<!-- jQuery library -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+
+	<!-- Latest compiled JavaScript -->
+	<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+
+	<script>
+		function get_current_time_d() {
+			var today = new Date();
+			var dd = String(today.getDate()).padStart(2, '0');
+			var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+			var yyyy = today.getFullYear();
+
+			today = yyyy + '-' + mm + '-' + dd;
+			return today;
+		}
+		function get_current_time_h() {
+			var today = new Date();
+			var hh = today.getHours();
+			var mi = today.getMinutes();
+			var s = today.getSeconds();
+
+			today = hh + ':' + mi+':'+s;
+			return today;
+		}
+		function get_current_time() {
+			var today = new Date();
+			var dd = String(today.getDate()).padStart(2, '0');
+			var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+			var yyyy = today.getFullYear();
+			var hh = today.getHours();
+			var mi = today.getMinutes();
+			var s = today.getSeconds();
+
+			today = yyyy + '-' + mm + '-' + dd+ " " + hh + ':' + mi+':'+s;
+			return today;
+		}
+		$(document).ready(function () {
+			$("#btn_date_in").click(function(){
+				$("#date_in_h").val(get_current_time_h()+'');
+				$("#date_in_d").val(get_current_time_d()+'');
+			});
+			$( "#btn_time_heart_rate" ).click(function() {
+				$("#time_heart_rate").val(get_current_time()+'');
+			});
+
+			$("#btn_time_pp").click(() => {
+				$("#time_pp").val(get_current_time()+'');
+			});
+		});
+	</script>
+</head>
+<body id="top" class='top'>
+	<main id="wrap" class="wrap">
+		<div class="sidebar">
+			<a href="" class="item item--01 active"><p>DASHBOARD</p></a>
+			<a href="/doctor/input" class="item item--02"><p>THÊM BỆNH NHÂN</p></a>
+			<a href="/doctor/search" class="item item--03"><p>TRA CỨU THÔNG TIN<br>BỆNH NHÂN</p></a>
+			<a href="/doctor/add_date_out" class="item item--04"><p>CẬP NHẬT<br>NGÀY RA VIỆN</p></a>
+			<div class="item"></div>
+			<div class="item"></div>
+		</div>
+		<div class="main">
+			<div class="nav">
+				<div class="nav__name">
+					<div class="img">
+						<img src="/static/img/user.png" alt="dd">
+					</div>
+					<p class="name"><%= data.doctor_name %></p>
+				</div>
+				<div class="nav__btn"><a href="/doctor/signout">LOGOUT</a></div>
+			</div>
+			<form method="POST" action="/doctor/input">
+				<div class="form">
+					<div class="wcm">
+						<% if (data.error){ %>
+                            <div id="login-alert" class="alert alert-danger col-sm-12"><%= data.error %></div>
+                        <%}%> 
+						<!-- THÔNG TIN BỆNH NHÂN -->
+						<p class="form__ttl"><em>THÔNG TIN BỆNH NHÂN</em></p>
+						<div class="row">
+							<div class=" col col1" >
+								<p class="row__ttl">Họ tên người bệnh:</p>
+								<input type="text" name="patient_name">
+							</div>
+							<div class="col col2">
+								<p class="row__ttl pad">Ngày tháng năm sinh:</p>
+								<input type="text" name='birth_date'>
+							</div>
+						</div>
+						<div class="row">
+							<div class=" col col3">
+								<p class="row__ttl">Giới tính:</p>
+								<input type="text" name='sex'>
+							</div>
+							<div class="col col4">
+								<p class="row__ttl pad">Dân tộc:</p>
+								<input type="text" name='nation'>
+							</div>
+							<div class="col col5">
+								<p class="row__ttl pad">Nghề nghiệp:</p>
+								<input type="text" name='job'>
+							</div>
+							<div class="col col6">
+								<p class="row__ttl pad">CMND:</p>
+								<input type="text" name='patient_id'>
+							</div>
+						</div>
+						<div class="row">
+							<div class=" col col3">
+								<p class="row__ttl">BHYT giá trị từ: </p>
+								<input type="text">
+							</div>
+							<div class="col col4">
+								<p class="row__ttl pad">Đến:</p>
+								<input type="text">
+							</div>
+							<div class="col col5">
+								<p class="row__ttl pad">Số BHYT:</p>
+								<input type="text" name='health_insurance_number'>
+							</div>
+						</div>
+						<div class="row">
+							<div class=" col col6">
+								<p class="row__ttl">Nhập viện lúc:</p>
+								<input type="text" name='date_in' id="date_in_h">
+							</div>
+							<div class="col col7">
+								<p class="row__ttl pad">Ngày:</p>
+								<input  type="text" id="date_in_d">
+							</div>	
+							<div class="btn" id="btn_date_in">NGÀY GIỜ HIỆN TẠI</div>
+							<!--<a href="" class="btn">NGÀY GIỜ HIỆN TẠI</a> !-->				
+						</div>
+						<!-- TÌNH TRẠNG BỆNH NHÂN -->
+						<p class="form__ttl mar"><em>TÌNH TRẠNG BỆNH NHÂN</em></p>
+						<div class="row">
+							<div class=" col col6">
+								<p class="row__ttl">Nhịp tim:</p>
+								<input type="text" name='heart_rate'>
+							</div>
+							<div class="col col7">
+								<p class="row__ttl pad">Ngày/giờ đo:</p>
+								<input type="text" name="time" id="time_heart_rate">
+							</div>	
+							<p class="btn" id="btn_time_heart_rate">NGÀY GIỜ HIỆN TẠI</p>				
+						</div>
+						<div class="row">
+							<div class=" col col6">
+								<p class="row__ttl">Huyết áp:</p>
+								<input type="text" name='pp'>
+							</div>
+							<div class="col col7">
+								<p class="row__ttl pad">Ngày/giờ đo:</p>
+								<input type="text" name='measure_date' id="time_pp">
+							</div>	
+							<div class="col col7">
+								<p class="row__ttl pad">Mã thiết bị:</p>
+								<select id="select1"> 
+									<% if (data.device_list){ %>
+										<% data.device_list.forEach(element => { %>
+											<option value="<%= element%>"><%= element.id%></option>
+										<%});%>
+									<%}%> 
+								</select> 
+							</div>
+							<div class="btn" id="btn_time_pp">NGÀY GIỜ HIỆN TẠI</div>
+							<!--<a href="" class="btn">NGÀY GIỜ HIỆN TẠI</a> !-->						
+						</div>
+						<!-- THÔNG TIN BÁC SĨ -->
+						<p class="form__ttl mar"><em>THÔNG TIN BÁC SĨ</em></p>
+						<div class="row">
+							<div class=" col col8">
+								<p class="row__ttl">Bác sĩ chẩn đoán:</p>
+								<input type="text" name="doctor_diagnose">
+							</div>					
+						</div>
+						<div class="row">
+							<div class=" col col8">
+								<p class="row__ttl">Chẩn đoán:</p>
+								<input type="text" class="area" name="diagnose">
+							</div>					
+						</div>
+						<div class="row">
+							<div class=" col col8">
+								<p class="row__ttl">Phương pháp điều trị:</p>
+								<input type="text" class="area" name='treat_method'>
+							</div>					
+						</div>
+						<div class="row">
+							<div class=" col col8">
+								<p class="row__ttl">Lời dặn của bác sĩ:</p>
+								<input type="text" class="area" name="doctor_advice">
+							</div>					
+						</div>
+						<div class="form__btn">
+							<button class="btn">XÓA TRƯỜNG ĐÃ NHẬP</button>
+							<input class="btn" type="submit" value='THÊM BỆNH NHÂN'/>
+						</div>
+					</div>
+				</div>
+			</form>
+			
+		</div>
+	</main>
+</body>
+</html> 

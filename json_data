@@ -1,0 +1,38 @@
+{
+"data":
+	{
+		"info":
+		{
+			"treat_method":"ho",
+			"doctor_guess":"undefined",
+			"name":"hoa",
+			"id":23,
+			"device_id":19,"doctor_advice":null
+		},
+		"error":"",
+		"name":"Patient page",
+		"chart_data":
+		[
+			{
+				"device_id":19,
+				"heart_rate":10,
+				"pp":19,"time":"2019-12-28T17:00:00.000Z",
+				"patient_id":23
+			},
+			{
+				"device_id":19,
+				"heart_rate":20,
+				"pp":30,"time":"2019-12-30T17:00:00.000Z","patient_id":23
+			},
+			{
+				"device_id":19,"heart_rate":30,"pp":11,"time":"2019-12-30T17:00:00.000Z","patient_id":23
+			},
+			{
+				"device_id":19,
+				"heart_rate":26,
+				"pp":37,"time":"2019-12-30T17:00:00.000Z",
+				"patient_id":23
+			}
+		]
+	}
+}

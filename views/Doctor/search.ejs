@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+	<meta charset="utf-8">
+	<meta name="format-detection" content="telephone=no">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
+	<title>DEMO</title>
+	<!--css-->
+	<link href="/static/css/style.min.css" rel="stylesheet" media="all">
+	<!-- Favicons -->
+	<link rel="icon" href="/static/img/favicon.png" type="image/vnd.microsoft.icon">
+</head>
+<body id="top" class='top'>
+	<main id="wrap" class="wrap">
+		<div class="sidebar">
+			<a href="" class="item item--01 active"><p>DASHBOARD</p></a>
+			<a href="/doctor/input" class="item item--02"><p>THÊM BỆNH NHÂN</p></a>
+			<a href="/doctor/search" class="item item--03"><p>TRA CỨU THÔNG TIN<br>BỆNH NHÂN</p></a>
+			<a href="/doctor/add_date_out" class="item item--04"><p>CẬP NHẬT<br>NGÀY RA VIỆN</p></a>
+			<div class="item"></div>
+			<div class="item"></div>
+		</div>
+		<div class="main">
+			<div class="nav">
+				<div class="nav__name">
+					<div class="img">
+						<img src="/static/img/user.png" alt="dd">
+					</div>
+					<p class="name"><%= data.name %></p>
+				</div>
+				<div class="nav__btn"><a href="/doctor/signout">LOGOUT</a></div>
+			</div>
+			<div class="form form2">
+				<form method="POST" action="/doctor/search">
+					<div class="form2__top">
+						<div class="row">
+							<div class=" col col1">
+								<p class="row__ttl">Mã bệnh nhân:</p>
+								<input type="text" name="patient_id">
+							</div>
+							<div class="col col2">
+								
+								<p class="row__ttl pad"><%= data.error %></p>
+								
+								<p class="row__ttl pad">Họ tên bệnh nhân:</p>
+								<input type="text" name='patient_name'>
+							</div>
+							<input class="btn" type="submit" value='TÌM KIẾM'/>
+						</div>
+					</div>
+				</form>
+				
+				<div class="form2__chart">
+					<img src="/static/img/chart.png" alt="chart">
+				</div>
+				<!-- THÔNG TIN BÁC SĨ -->
+				<div class="form2__bot">
+					<p class="form__ttl mar"><em>THÔNG TIN BỆNH NHÂN</em></p>
+					<div class="row">
+						<div class=" col col9">
+							<p class="row__ttl">Họ tên người bệnh:</p>
+							<% if (data.info){ %>
+								<input type="text" class="area" value="<%= data.info.name %>">
+							<%}%> 
+						</div>	
+						<div class=" col col10">
+							<p class="row__ttl pad">Tuổi</p>
+							<input type="text">
+						</div>					
+					</div>
+					<div class="row">
+						<div class=" col col8">
+							<p class="row__ttl">Chẩn đoán:</p>
+							<% if (data.info){ %>
+								<input type="text" class="area" value="<%= data.info.doctor_guess %>">
+							<%}%> 
+						</div>					
+					</div>
+					<div class="row">
+						<div class=" col col8">
+							<p class="row__ttl">Phương pháp điều trị:</p>
+							<% if (data.info){ %>
+								<input type="text" class="area" value="<%= data.info.treat_method %>">
+							<%}%> 
+						</div>					
+					</div>
+					<div class="row">
+						<div class=" col col8">
+							<p class="row__ttl">Lời dặn của bác sĩ:</p>
+							<% if (data.info){ %>
+								<input type="text" class="area" value="<%= data.info.doctor_advice %>">
+							<%}%>  
+						</div>					
+					</div>
+				</div>
+			</div>
+		</div>
+	</main>
+</body>
+</html> 

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+	<meta charset="utf-8">
+	<meta name="format-detection" content="telephone=no">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
+	<title>DEMO</title>
+	<!--css-->
+	<link href="/static/css/style.min.css" rel="stylesheet" media="all">
+	<!-- Favicons -->
+	<link rel="icon" href="/static/img/favicon.png" type="image/vnd.microsoft.icon">
+</head>
+<body id="top" class='top'>
+	<main id="wrap" class="wrap">
+		<div class="sidebar">
+			<a href="" class="item item--01 active"><p>DASHBOARD</p></a>
+			<a href="/doctor/input" class="item item--02"><p>THÊM BỆNH NHÂN</p></a>
+			<a href="/doctor/search" class="item item--03"><p>TRA CỨU THÔNG TIN<br>BỆNH NHÂN</p></a>
+			<a href="/doctor/add_date_out" class="item item--04"><p>CẬP NHẬT<br>NGÀY RA VIỆN</p></a>
+			<div class="item"></div>
+			<div class="item"></div>
+		</div>
+		<div class="main">
+			<div class="nav">
+				<div class="nav__name">
+					<div class="img">
+						<img src="/static/img/user.png" alt="dd">
+					</div>
+					<p class="name"><%= data.name %></p>
+				</div>
+				<div class="nav__btn"><a href="/doctor/signout">LOGOUT</a></div>
+			</div>
+			<div class="form form2">
+				<form method="POST" action='/doctor/add_date_out'>
+					<div class="form2__top">
+						<div class="row">
+							<div class="col col2">
+								<p class="row__ttl pad">Họ tên bệnh nhân:</p>
+								<input type="text" name='name'>
+							</div>
+							<input type="submit" class="btn" value='TÌM KIẾM'/>
+						</div>
+					</div>
+				</form>
+				
+				<!-- THÔNG TIN BỆNH NHÂN -->
+				<div class="form2__bot">
+					<p class="form__ttl mar"><em>THÔNG TIN BỆNH NHÂN</em></p>
+					<form method="POST" action='/doctor/add_date_out'>
+						<div class="row">
+							<div class=" col col1">
+								<% if (data.error){ %>
+									<div id="login-alert" class="alert alert-danger col-sm-12"><%= data.error %></div>
+								<%}%>  
+							</div>	
+						</div>
+						<div class=" col col1">
+							<p class="row__ttl">CMND:</p>
+							<input type="text" name="patient_id">
+						</div>
+						<div class="row">
+							<div >
+								<p class=" col col1"">Mã bệnh nhân:</p>
+								<input type="text"/>
+							</div>	
+						</div>
+						<div class="row">
+							<div >
+								<p class=" col col1">Ngày ra viện:</p>
+								<input type="text" name="date_out">
+							</div>	
+						</div>						
+						<div class="row">
+							<div >
+								<input class=" col col1" id='btn_update' type="submit" value='CẬP NHẬT' />
+							</div>	
+						</div>
+					</form>
+					
+				</div>
+			</div>
+		</div>
+	</main>
+</body>
+</html> 
