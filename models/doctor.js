@@ -1,6 +1,9 @@
 var q = require("q");
 var db = require("../common/database");
 
+const AVAILABLE = 0;
+const BUSY = 1;
+
 var conn = db.getConnection();
 
 function addPatient(user) {
@@ -180,8 +183,9 @@ function addPatientInfo(params) {
     /* Begin transaction */
     var defer = q.defer();
     conn.beginTransaction(function(err) {
-    //if (err) { throw err; }
-    let sql = "INSERT INTO patient (name, id_number, date_in, device_id) VALUES ('"+params.patient_name+"','"+params.patient_id+"','"+ params.date_in+"','"+params.device_id+"')";
+    if (err) { throw err; }
+    let date_in = params.date_in_d + " " + params.date_in_h;
+    let sql = "INSERT INTO patient (name, id_number, date_in, device_id, birth_date) VALUES ('"+params.patient_name+"','"+params.patient_id+"','"+ date_in+"','"+params.device_id+"','"+params.birth_date+"')";
     console.log(sql + ' _1');
     conn.query(sql, function(err, result) {
       if (err) { 
@@ -195,12 +199,13 @@ function addPatientInfo(params) {
     if(data) {
         data.then(function(User) {
             var user = User[0];
-            x = user.id;  
-            sql = "INSERT INTO treat (doctor_id, patient_id, doctor_guess, treat_method, doctor_advice) VALUES ('"+params.doctor_id+"','"+ x +"','"+ params.doctor_diagnose+"','"+params.treat_method+"','"+params.doctor_advice+"')";
+            x = user.id;
+            var sql = "INSERT INTO treat (doctor_id, patient_id, doctor_guess, treat_method, doctor_advice) VALUES ('"+params.doctor_id+"','"+ x +"','"+ params.doctor_diagnose+"','"+params.treat_method+"','"+params.doctor_advice+"')";
             console.log(sql + ' _2');
             conn.query(sql, function(err, result) {
               if (err) { 
                 conn.rollback(function() {
+                    console.log("err1");
                   throw err;
                 });
               }  
@@ -210,6 +215,7 @@ function addPatientInfo(params) {
               conn.query(sql, function(err, result) {
                   if (err) { 
                       conn.rollback(function() {
+                        console.log("err2");
                         throw err;
                       });
                   }  
@@ -217,20 +223,39 @@ function addPatientInfo(params) {
                       if (err) { 
                         conn.rollback(function() {
                           defer.reject(err);
+                          console.log("err3");
                           throw err;
                         });
                       }
                       //defer.resolve(result);
                       console.log('Transaction Complete.');
-                      return defer.resolve(result);;
+                      
                   });
+                  if(updateDeviceStatus(params.device_id, BUSY)) {
+                    defer.resolve(result);
+                  }
+                  else {
+                    return false;
+                  }
               });
+              return defer.promise;
             });
         });
     }
     });
+    //return defer.promise;
   });
   /* End transaction */
+}
+
+function updateDeviceStatus(id, status) { // Cap nhat trang thai cua thiet bi, 0 la ranh~, 1 k ranh~
+    let sql = "UPDATE device SET status = '"+ status + "' WHERE id = '"+id+"'";
+    conn.query(sql, (err, res) => {
+        if (err) {
+            throw err;
+        } 
+        return true;
+    })
 }
 
 module.exports = {

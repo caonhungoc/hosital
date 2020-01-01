@@ -133,38 +133,61 @@ router.post("/add_date_out", urlencodedParser, function(req, res) {
 router.post("/input", urlencodedParser, function(req, res) {
     var params = req.body;
     params.doctor_id = req.session.doctor_id;
+    console.log(params.device_id);
+    
     if(req.session.username) {
-        console.log("patient name = " + params.patient_name+', cmnd = '+params.id);
-        if(params.patient_name != '' && params.device_id != '' && params.patient_name != '') {// need check more params from form
-
+        ///
+        // var data = user_md.getFreeDeviceList();
+        // if(data) {
+        //     data.then(function(result) {
+        //         if(params.patient_name != '' && params.device_id != '' && params.patient_name != '' && params.patient_id != '' && params.birth_date != '' && params.date_in_d != '' && params.heart_rate != '' && params.time_heart_rate != '' && params.pp != '' && params.time_pp != '') {// need check more params from form
+        //             var data1 = user_md.addPatientInfo(params);
+        //             console.log("cccv");
+        //             data1.then(function(res) {
+        //                 console.log("ccc");
+        //                 res.render("./Doctor/input", {data:{doctor_name:  req.session.doctorname, error :"OK", device_list: result}}); 
+        //             }).catch(function(err){
+        //                 console.log("ccc321312");
+        //                 res.render("./Doctor/input", {data:{doctor_name:  req.session.doctorname, error :"NOT OK1", device_list: result}});
+        //             })
+        //         }
+        //         else { //Form điền không đủ dữ liệu thì k chèn vào database (db)
+        //             console.log("ccc else");
+        //             res.render("./Doctor/input", {data:{doctor_name:  req.session.doctorname, error :"NOT OK", device_list: result}});
+        //         }
+        //     }).catch(function(err){
+        //         console.log("catch" + data + " --" + result);
+        //         res.render("./Doctor/input", {data:{doctor_name:  req.session.doctorname, error :"NOT OK", device_list: result}});
+        //     })
+        // }
+        ///  
+        if(params.patient_name != '' && params.device_id != '' && params.patient_name != '' && params.patient_id != '' && params.birth_date != '' && params.date_in_d != '' && params.heart_rate != '' && params.time_heart_rate != '' && params.pp != '' && params.time_pp != '') {// need check more params from form
             var data = user_md.addPatientInfo(params);
-            console.log("cccv");
-            res.render("./Doctor/input", {data: req.session.doctorname});
-            if(data) {
+            if(data != false) {
                 console.log("cccv");
-                res.render("./Doctor/input", {data: req.session.doctorname});
-                data.then(function(result) {
-                    //res.render("./Doctor/input", {data: {error: "Successful"}});
-                    console.log("ccc");
-                    res.render("./Doctor/input", {data:{doctor_name:  req.session.doctorname, error :"OK"}});
-                    
-                }).catch(function(err){
-                    var data = {
-                        error : "Could not insert data"
-                    };
-                    console.log("ccc321312");
-                    res.render("./Doctor/input", {error: data});
-                })
+                var data1 = user_md.getFreeDeviceList();
+                if(data1) {
+                    data1.then(function(result) {
+                        res.render("./Doctor/input", {data:{doctor_name:  req.session.doctorname, error :"OK", device_list: result}}); 
+                    }).catch(function(e) {
+                        console.log("eerrrr");
+                        throw e;
+                    })  
+                }
             }
         }
         else {
-            var data1 = {
-                doctor_name: req.session.doctorname,
-                error : "Could not insert data"
-            };
-            console.log("ccc321312");
-            res.render("./Doctor/input", {data: data1});
+            var data1 = user_md.getFreeDeviceList();
+                if(data1) {
+                    data1.then(function(result) {
+                        res.render("./Doctor/input", {data:{doctor_name:  req.session.doctorname, error :"NOT OK", device_list: result}}); 
+                    }).catch(function(e) {
+                        console.log("eerrrr");
+                        throw e;
+                    })  
+                }
         }
+
     }
     else {
         res.send("Access denied!");

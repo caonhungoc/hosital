@@ -138,11 +138,11 @@
 						<div class="row">
 							<div class=" col col6">
 								<p class="row__ttl">Nhập viện lúc:</p>
-								<input type="text" name='date_in' id="date_in_h">
+								<input type="text" name='date_in_h' id="date_in_h">
 							</div>
 							<div class="col col7">
 								<p class="row__ttl pad">Ngày:</p>
-								<input  type="text" id="date_in_d">
+								<input  type="text" id="date_in_d" name='date_in_d'>
 							</div>	
 							<div class="btn" id="btn_date_in">NGÀY GIỜ HIỆN TẠI</div>
 							<!--<a href="" class="btn">NGÀY GIỜ HIỆN TẠI</a> !-->				
@@ -171,10 +171,10 @@
 							</div>	
 							<div class="col col7">
 								<p class="row__ttl pad">Mã thiết bị:</p>
-								<select id="select1"> 
+								<select id="device_id" name="device_id"> 
 									<% if (data.device_list){ %>
 										<% data.device_list.forEach(element => { %>
-											<option value="<%= element%>"><%= element.id%></option>
+											<option value="<%= element.id%>"><%= element.id%></option>
 										<%});%>
 									<%}%> 
 								</select> 
