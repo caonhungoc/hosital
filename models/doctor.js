@@ -147,7 +147,7 @@ function getPatientNoDateOut(id) {
     return false;
 }
 
-function getFreeDeviceList() {
+function getFreeDeviceList(callback) {
     var defer = q.defer();
         let qq = "SELECT id FROM device WHERE status = 0";
         console.log(qq + " no dateout");
@@ -158,7 +158,7 @@ function getFreeDeviceList() {
                 defer.resolve(result);
             }
         });
-        return defer.promise;
+        return callback(defer.promise);
 }
 
 function updateDateOut(patient_id, date) {
@@ -179,7 +179,7 @@ function updateDateOut(patient_id, date) {
 }
 
 //Add all info of patient(id, doctor's advice, device id, device value,...) to 3 tables of database
-function addPatientInfo(params) {
+function addPatientInfo(params, callback) {
     /* Begin transaction */
     var defer = q.defer();
     conn.beginTransaction(function(err) {
@@ -227,34 +227,35 @@ function addPatientInfo(params) {
                           throw err;
                         });
                       }
+                      
                       //defer.resolve(result);
                       console.log('Transaction Complete.');
                       
                   });
-                  if(updateDeviceStatus(params.device_id, BUSY)) {
-                    defer.resolve(result);
-                  }
-                  else {
-                    return false;
-                  }
+                  updateDeviceStatus(params.device_id, BUSY, ()=> {
+                    return callback(result);///CAllBACK hell :((
+                  })
+                //defer.resolve(result);
               });
-              return defer.promise;
+              //return defer.promise;
             });
         });
     }
+        
     });
     //return defer.promise;
   });
   /* End transaction */
 }
 
-function updateDeviceStatus(id, status) { // Cap nhat trang thai cua thiet bi, 0 la ranh~, 1 k ranh~
+function updateDeviceStatus(id, status, callback) { // Cap nhat trang thai cua thiet bi, 0 la ranh~, 1 k ranh~
     let sql = "UPDATE device SET status = '"+ status + "' WHERE id = '"+id+"'";
+    console.log(sql + " ccc");
     conn.query(sql, (err, res) => {
         if (err) {
             throw err;
         } 
-        return true;
+        return callback();
     })
 }
 
@@ -267,5 +268,6 @@ module.exports = {
     getInfoForSearch: getInfoForSearch,
     addPatientInfo: addPatientInfo,
     updateDateOut: updateDateOut,
-    getFreeDeviceList: getFreeDeviceList
+    getFreeDeviceList: getFreeDeviceList,
+    updateDeviceStatus: updateDeviceStatus
 }

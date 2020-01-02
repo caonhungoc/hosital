@@ -67,8 +67,7 @@ router.post("/search", urlencodedParser, function(req, res) {
 
 router.get("/input", function(req, res) {
     if(req.session.username) {
-        var data = user_md.getFreeDeviceList();
-        if(data) {
+        var data = user_md.getFreeDeviceList((data)=> {
             data.then(function(result) {
                 //res.render("./Doctor/input", {data: req.session.doctorname});
                 res.render("./Doctor/input", {data: {doctor_name: req.session.doctorname, device_list: result}});
@@ -79,7 +78,7 @@ router.get("/input", function(req, res) {
                 //console.log("ccc321312");
                 res.render("./Doctor/input", {error: data});
             })
-        }
+        });
     }
     else res.redirect("/doctor/signin");
 });
@@ -130,67 +129,40 @@ router.post("/add_date_out", urlencodedParser, function(req, res) {
     }
 })
 
-router.post("/input", urlencodedParser, function(req, res) {
+router.post("/input", urlencodedParser, function(req, ress) {
     var params = req.body;
     params.doctor_id = req.session.doctor_id;
     console.log(params.device_id);
     
     if(req.session.username) {
-        ///
-        // var data = user_md.getFreeDeviceList();
-        // if(data) {
-        //     data.then(function(result) {
-        //         if(params.patient_name != '' && params.device_id != '' && params.patient_name != '' && params.patient_id != '' && params.birth_date != '' && params.date_in_d != '' && params.heart_rate != '' && params.time_heart_rate != '' && params.pp != '' && params.time_pp != '') {// need check more params from form
-        //             var data1 = user_md.addPatientInfo(params);
-        //             console.log("cccv");
-        //             data1.then(function(res) {
-        //                 console.log("ccc");
-        //                 res.render("./Doctor/input", {data:{doctor_name:  req.session.doctorname, error :"OK", device_list: result}}); 
-        //             }).catch(function(err){
-        //                 console.log("ccc321312");
-        //                 res.render("./Doctor/input", {data:{doctor_name:  req.session.doctorname, error :"NOT OK1", device_list: result}});
-        //             })
-        //         }
-        //         else { //Form điền không đủ dữ liệu thì k chèn vào database (db)
-        //             console.log("ccc else");
-        //             res.render("./Doctor/input", {data:{doctor_name:  req.session.doctorname, error :"NOT OK", device_list: result}});
-        //         }
-        //     }).catch(function(err){
-        //         console.log("catch" + data + " --" + result);
-        //         res.render("./Doctor/input", {data:{doctor_name:  req.session.doctorname, error :"NOT OK", device_list: result}});
-        //     })
-        // }
-        ///  
         if(params.patient_name != '' && params.device_id != '' && params.patient_name != '' && params.patient_id != '' && params.birth_date != '' && params.date_in_d != '' && params.heart_rate != '' && params.time_heart_rate != '' && params.pp != '' && params.time_pp != '') {// need check more params from form
-            var data = user_md.addPatientInfo(params);
-            if(data != false) {
+            var data = user_md.addPatientInfo(params, (res) => {
+                //insert data finished!
                 console.log("cccv");
-                var data1 = user_md.getFreeDeviceList();
-                if(data1) {
-                    data1.then(function(result) {
-                        res.render("./Doctor/input", {data:{doctor_name:  req.session.doctorname, error :"OK", device_list: result}}); 
+                user_md.getFreeDeviceList( (data) => {
+                    data.then(function(result) {
+                        ress.render("./Doctor/input", {data:{doctor_name:  req.session.doctorname, error :"OK", device_list: result}}); 
                     }).catch(function(e) {
-                        console.log("eerrrr");
+                        console.log("eerrrr1 "+ e);
                         throw e;
                     })  
-                }
-            }
+                });
+            });
         }
         else {
-            var data1 = user_md.getFreeDeviceList();
-                if(data1) {
-                    data1.then(function(result) {
-                        res.render("./Doctor/input", {data:{doctor_name:  req.session.doctorname, error :"NOT OK", device_list: result}}); 
-                    }).catch(function(e) {
-                        console.log("eerrrr");
-                        throw e;
-                    })  
-                }
+            var data1 = user_md.getFreeDeviceList((data1)=> {
+                data1.then(function(result) {
+                    res.render("./Doctor/input", {data:{doctor_name:  req.session.doctorname, error :"NOT OK", device_list: result}}); 
+                }).catch(function(e) {
+                    console.log("eerrrr2 " + e);
+                    throw e;
+                })  
+            });
         }
 
     }
     else {
-        res.send("Access denied!");
+        ress.send("Access denied!");
     }
 })
 
