@@ -103,6 +103,10 @@ router.get("/signout", function(req, res) {
 });
 
 router.get("/add_date_out", function(req, res) {
+    // var x = user_md.getPatientNoDateOut1(31313122, (data) => {
+    //     if(data == false) return console.log("cccccccccccccccccccccc fuck");
+    //     console.log(data[0].device_id + " is id of device");
+    // });
     if(req.session.username) {
         res.render("./Doctor/add_date_out", {data: req.session.username, error: ''});
     }
@@ -115,14 +119,13 @@ router.post("/add_date_out", urlencodedParser, function(req, res) {
     var params = req.body;
     if(req.session.username) {
         console.log("patient name = " + params.patient_id+', cmnd = '+params.date_out);
-        var data = user_md.updateDateOut(params.patient_id, params.date_out);
-        if(data) {
+        user_md.updateDateOut(params.patient_id, params.date_out, (data) => {
             data.then(function(User) {
                 res.render("./Doctor/add_date_out", {data: {error:'Successful update', name:req.session.doctorname}});
             }).catch(e=>{
                 res.render("./Doctor/add_date_out", {data: {error:'Can not update', name:req.session.doctorname}});
             });
-        }
+        });
     }
     else {
         res.send("Access denied!");

@@ -147,6 +147,20 @@ function getPatientNoDateOut(id) {
     return false;
 }
 
+function getPatientNoDateOut1(id, callback) {
+    if(id) {
+        let qq = "SELECT * FROM patient WHERE id_number ='" + id+"' limit 1";
+        console.log(qq + " no dateout11");
+        var query = conn.query(qq, function(err, result) {
+            if(err) {
+               console.log(err+ " ccxx");
+            }
+            return callback(result);
+        });  
+    }
+    return false;
+}
+
 function getFreeDeviceList(callback) {
     var defer = q.defer();
         let qq = "SELECT id FROM device WHERE status = 0";
@@ -161,7 +175,7 @@ function getFreeDeviceList(callback) {
         return callback(defer.promise);
 }
 
-function updateDateOut(patient_id, date) {
+function updateDateOut(patient_id, date, callback) {
     if(date !='' && patient_id != '') {
         var defer = q.defer();
         let qq = "update patient set date_out = '"+date+"' where id_number='"+patient_id+"' and date_out IS NULL";
@@ -169,13 +183,27 @@ function updateDateOut(patient_id, date) {
         var query = conn.query(qq, function(err, result) {
             if(err) {
                 defer.reject(err);
+                throw err;
             }else {
                 defer.resolve(result);
             }
         });
-        return defer.promise;
+        //update status of device to be free
+        getPatientNoDateOut1(patient_id, (data) => {
+            let q = "update device set status = '"+AVAILABLE+"' where id ='"+data[0].device_id+"'";
+            console.log(q + "cc");
+            conn.query(q, (e, r) => {
+                if(e) {
+                    console.log("Error: get patient no date out "+ e);
+                    throw e;
+                }
+                return callback(defer.promise);
+            });
+        }) 
     }
-    return false;
+    else {
+        return false;
+    }
 }
 
 //Add all info of patient(id, doctor's advice, device id, device value,...) to 3 tables of database
@@ -269,5 +297,6 @@ module.exports = {
     addPatientInfo: addPatientInfo,
     updateDateOut: updateDateOut,
     getFreeDeviceList: getFreeDeviceList,
-    updateDeviceStatus: updateDeviceStatus
+    updateDeviceStatus: updateDeviceStatus,
+    getPatientNoDateOut1:getPatientNoDateOut1
 }
