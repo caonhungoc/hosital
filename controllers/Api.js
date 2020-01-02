@@ -17,6 +17,8 @@ router.post("/insert", function(req, res) {
 
     today = yyyy + '-' + mm + '-' + dd + ' '+ hh + ':' + mi+':'+s;
     console.log("today is "+today+ " device id = "+ params.id + ", pp = " + params.pressure);
+    api_md.addDeviceValue(params.id, params.heart_rate, params.pressure, today);
+    res.json({data : "OK"});
 });
 
 

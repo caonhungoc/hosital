@@ -22,9 +22,9 @@ function getPatientByID(id) {
 }
 
 function getPatientNoDateOut(device_id) {
-    if(id) {
+    if(device_id != '') {
         return new Promise((resolve, reject) => {
-            let qq = "SELECT * FROM patient WHERE device_id ='" + device_id+"' limit 1";
+            let qq = "SELECT * FROM patient WHERE device_id ='" + device_id+"' and date_out IS NULL limit 1";
             console.log(qq + " no dateout");
             conn.query(qq, function(err, result) {
                 if(err) {
@@ -37,46 +37,11 @@ function getPatientNoDateOut(device_id) {
     }
 }
 
-function addDeviceValue(device_id, heart_rate, pp) {
-    if(id) {
-        getPatientNoDateOut(device_id)
-        .then((user) => {
-            isertDeviceValue(device_id, heart_rate, pp, time, user[0].id);
-        }).catch(e => {
-            console.log(e + "");
-        })
-
-        // let qq = "SELECT * FROM patient WHERE device_id ='" + device_id+"' and date_out IS NULL limit 1";
-        // console.log(qq + " no dateout");
-        // return new Promise( (resolve, reject) => {
-        //     conn.query(qq, function(err, result) {
-        //         if(err) {
-        //             return reject(err);
-        //         }else {
-        //             resolve(result);
-        //         }
-        //     });
-        // }).then( (user) => {
-        //     let sql = "INSERT INTO device_value (device_id, heart_rate, pp, time, patient_id) VALUES ("+params.device_id+","+params.heart_rate+","+ params.pp+","+time+")";
-        //     conn.query(sql, function(err, result) {
-        //         if(err) {
-        //             defer.reject(err);
-        //         }
-        //         else {
-        //             defer.resolve(result);
-        //         }
-        //     });
-        // }).catch(e => {
-        //     console(e +"");
-        // })
-    }
-    return false;
-}
-
-function isertDeviceValue(device_id, heart_rate, pp, time, patient_id) {
-    if(params) {
+function insertDeviceValue(device_id, heart_rate, pp, time, patient_id) {
+    if(device_id != '' && heart_rate != '' && pp != '') {
         return new Promise((resolve, reject) => {
-            let sql = "INSERT INTO device_value (device_id, heart_rate, pp, time, patient_id) VALUES ("+device_id+","+heart_rate+","+ pp+","+time+",'"+patient_id+"')";
+            let sql = "INSERT INTO device_value (device_id, heart_rate, pp, time, patient_id) VALUES ('"+device_id+"','"+heart_rate+"','"+ pp+"','"+time+"','"+patient_id+"')";
+            console.log(sql + " insert value!!")
             conn.query(sql, function(err, result) {
                 if(err) {
                     reject(err);
@@ -87,6 +52,18 @@ function isertDeviceValue(device_id, heart_rate, pp, time, patient_id) {
             });
         })
     }
+}
+
+function addDeviceValue(device_id, heart_rate, pp, time) {
+    if(device_id) {
+        getPatientNoDateOut(device_id)
+        .then((user) => {
+            insertDeviceValue(device_id, heart_rate, pp, time, user[0].id);
+        }).catch(e => {
+            console.log(e + "");
+        })
+    }
+    return false;
 }
 
 module.exports = {
