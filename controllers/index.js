@@ -5,6 +5,7 @@ var router = express.Router();
 router.use("/doctor", require("./Doctor"));
 router.use("/patient", require("./Patient"));
 router.use("/api", require("./Api"));
+router.use("/device", require("./Device"));
 
 router.get("/", function(req, res) {
     //res.json({"message" : "This is home page"});
