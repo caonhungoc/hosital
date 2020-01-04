@@ -34,25 +34,24 @@
 				}).done(function(data){ //
 					let d = JSON.stringify(data);
 					d = JSON.parse(d);
-					//console.log(json.data.info.name);
-					var time = [], pp = [], heart_rate = [];
-					d.data.chart_data.forEach(element => {
-						time.push(element.time);
-						pp.push(element.pp);
-						heart_rate.push(element.heart_rate);
-					});
+					console.log(d.data.device_id + " is device id, and password = " + d.data.password);
+                    if(d.data.device_id != '') {
+                        $("#status").val("Insert Successfully! Id = " + d.data.device_id + " with password = " + d.data.password);
+                    }
+                    else {
+                        $("#status").val(d.data.error + "");
+                    }
 				});
 			});
 		}
 		$(document).ready(function () {
-			
+			addDevice();
 		});
 	</script>
 </head>
 <body>
     <form id="my_form" method="POST" action="/device/add">
         <div class="row">
-            <p id="res"></p>
             <div class=" col col6">
                 <p class="row__ttl">Trạng thái:</p>
                 <input type="text" name='status' id="status">
@@ -61,7 +60,7 @@
                 <p class="row__ttl pad">Mật khẩu cho thiết bị:</p>
                 <input  type="text" id="pass" name='pass' placeholder="Mật khẩu này không giống nhau giữa các thiết bị!">
             </div>	
-            <input class="btn" id="add" type="submit">Thêm</div>		
+            <input class="btn" id="add" type="submit" value="THÊM">	
         </div>
     </form>
 </body>

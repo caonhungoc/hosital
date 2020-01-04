@@ -7,10 +7,10 @@ const BUSY = 1;
 var conn = db.getConnection();
 
 let getAllPass = () => { //Dựa vào mật khẩu để đảm bảo id gán cho thiết bị chính xác hơn
-    let q = "SELET * from device";
-    console.log(q+' devicee');
+    let q = "SELECT * from device";
+    console.log(q+' get all pass');
     return new Promise((resolve, reject) => {
-        conn.query(sql, function(err, result) {
+        conn.query(q, function(err, result) {
             if(err) {
                 return reject(err);
             }
@@ -38,15 +38,18 @@ let checkPassExist = (password) => {
 }
 
 let getDeviceIdByPass = (pass) => {
-    let q = "SELET * from device where pass = '"+pass+"'" ;
-    console.log(q+' deviceeeeee');
+    let q = "SELECT * from device where pass = '"+pass+"'" ;
+    console.log(q+' get device by pass');
     return new Promise((resolve, reject) => {
-        conn.query(sql, function(err, result) {
+        conn.query(q, function(err, result) {
             if(err) {
+               
                 return reject(err);
             }
             else {
-                resolve(result);
+                //console.log(result[0]);
+                console.log(q+' get device by pass in sql query');
+                resolve(result[0]);//Trả về id và pass của thiết bị vừa mới được thêm vào
             }
         });
     })
@@ -54,42 +57,25 @@ let getDeviceIdByPass = (pass) => {
 
 let addDevice = (pass) => {
     if(pass != '') {
-        checkPassExist(pass)
-        .then((password) => {
-            let q = "INSERT INTO device (status, pass) VALUES (0,'" + password +"')";
-            console.log(q+' devicee');
-            return new Promise((resolve, reject) => {
-                conn.query(sql, function(err, result) {
-                    if(err) {
-                        return reject(err);
-                    }
-                    else {
-                        resolve(pass);
-                    }
-                });
-            })
-        })
-        .catch((e) => {
-            console.log(e + "");
-        })
-    }
-}
-
-let addDevice1 = (pass) => {
-    if(pass != '') {
         let q = "INSERT INTO device (status, pass) VALUES (0,'" + pass +"')";
         console.log(q+' devicee');
         return new Promise((resolve, reject) => {
-            conn.query(sql, function(err, result) {
+            conn.query(q, function(err, result) {
                 if(err) {
                     return reject(err);
                 }
                 else {
-                    resolve(result);
+                    resolve(pass);
                 }
             });
         })
     }
+}
+
+let addDeviceAndReturn = (password) => { //  Cẩn thận với cái hàm mũi tên này, nếu chỉ có 1 dòng, nó tương đương với return, bay mẹ nó não
+    return checkPassExist(password) // https://www.youtube.com/watch?v=FmsvKGYd9Kk&list=PLzrVYRai0riRaLjgZe00gPMyLI1NdWcpL&index=9
+    .then(pass =>  addDevice(pass)) // Xem kỹ mấy bài đầu của link trên
+    .then(pass1 =>  getDeviceIdByPass(pass1)) 
 }
 
 let deleteDevice = (id) => {
@@ -97,7 +83,7 @@ let deleteDevice = (id) => {
         let q = "DELETE FROM device WHERE id = '" + id + "'";
         console.log(q+' devicee');
         return new Promise((resolve, reject) => {
-            conn.query(sql, function(err, result) {
+            conn.query(q, function(err, result) {
                 if(err) {
                     return reject(err);
                 }
@@ -114,7 +100,7 @@ let updateDevice = (id, pass, status) => {
         let q = "UPDATE device SET pass = '"  + pass+"', status = '" + status + "' WHERE id = '"+ id+"'";
         console.log(q+' devicee');
         return new Promise((resolve, reject) => {
-            conn.query(sql, function(err, result) {
+            conn.query(q, function(err, result) {
                 if(err) {
                     return reject(err);
                 }
@@ -130,5 +116,6 @@ module.exports = {
     addDevice: addDevice,
     deleteDevice: deleteDevice,
     updateDevice: updateDevice,
-    getDeviceIdByPass: getDeviceIdByPass
+    getDeviceIdByPass: getDeviceIdByPass,
+    addDeviceAndReturn: addDeviceAndReturn
 }

@@ -7,7 +7,7 @@ var urlencodedParser = bodyParser.urlencoded({ extended: false });
 
 router.get("/add", function(req, res) {
     if(req.session.username) {
-        res.redirect("/device/add");
+        res.render("./Device/add");
     }
     else {
         res.render("./Doctor/index", {data: {}});
@@ -42,26 +42,30 @@ router.get("/", function(req, res) {
     }
 });
 
+
 router.post("/add", urlencodedParser, function(req, res) {
     var params = req.body;
     if(req.session.username && params.pass != '') {
-        device_md.addDevice(params.pass)
-        .then((pass) => {
-            device_md.getDeviceIdByPass(pass).then((device) =>{
-                //device[0].id;
-                res.jsonp({
-                    data: {
-                        device_id: device[0].id, 
-                        error:'', 
-                        password: pass
-                    }
-                });
-            }).catch(e => {
-                console.log(e + ' catch 1');
-            })
+        device_md.addDeviceAndReturn(params.pass)
+        .then( device => {
+            console.log(device + ' hello = ' + device.id);
+            res.jsonp({
+                data: {
+                    device_id: device.id, 
+                    error:'', 
+                    password: device.pass
+                }
+            });
         }).catch(e => {
-            console.log(e + ' catch 2');
-        });
+            //console.log(device + ' cccxx');
+            res.jsonp({
+                data: {
+                    device_id: '', 
+                    error: e + '', 
+                    password: params.pass
+                }
+            });
+        })
     }
     else {
         res.render("./Doctor/index", {data: {}});
