@@ -1,0 +1,67 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="format-detection" content="telephone=no">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
+	<title>DEMO</title>
+	<!--css-->
+	<link href="/static/css/style.min.css" rel="stylesheet" media="all">
+	<!-- Favicons -->
+	<link rel="icon" href="img/favicon.png" type="image/vnd.microsoft.icon">
+
+	<!-- jQuery library -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+
+	<!-- Latest compiled JavaScript -->
+	<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+
+	<script>
+        function deleteDevice() {
+			$("#my_form").submit(function(event){
+				event.preventDefault(); //prevent default action 
+				var post_url = $(this).attr("action"); //get form action url
+				var request_method = $(this).attr("method"); //get form GET/POST method
+				var form_data = $(this).serializeArray(); //Encode form elements for submissiondataContainer.textContent = JSON.stringify(data, null, "  ");
+				
+				$.ajax({
+					url : post_url,
+					type: request_method,
+					data : form_data
+				}).done(function(data){ //
+					let d = JSON.stringify(data);
+					d = JSON.parse(d);
+					console.log(d.data.device_id + " is device id");
+                    if(d.data.device_id != '') {
+                        $("#status").val("Delete Successfully! Id = " + d.data.device_id);
+                    }
+                    else {
+                        $("#status").val(d.data.error + "");
+                    }
+				});
+			});
+		}
+		$(document).ready(function () {
+			deleteDevice();
+		});
+	</script>
+</head>
+<body>
+    <form id="my_form" method="POST" action="/device/delete">
+        <div class="row">
+            <div class=" col col6">
+                <p class="row__ttl">Trạng thái:</p>
+                <input type="text" name='status' id="status">
+            </div>
+            <div class="col col7">
+                <p class="row__ttl pad">ID của thiết bị:</p>
+                <input  type="text" id="id" name='id' placeholder="ID có được sau khi thêm thiêt bị!">
+            </div>	
+            <input class="btn" id="add" type="submit" value="Xóa">	
+        </div>
+    </form>
+</body>
+</html> 

@@ -21,6 +21,21 @@ let getAllPass = () => { //Dựa vào mật khẩu để đảm bảo id gán ch
     })
 }
 
+let getAllIdInUse = () => { //Dựa vào mật khẩu để đảm bảo id gán cho thiết bị chính xác hơn
+    let q = "SELECT * from device where status = 1";
+    console.log(q+' get all id in use');
+    return new Promise((resolve, reject) => {
+        conn.query(q, function(err, result) {
+            if(err) {
+                return reject(err);
+            }
+            else {
+                resolve(result);
+            }
+        });
+    })
+}
+
 let checkPassExist = (password) => {
     return new Promise((resolve, reject) => {
         getAllPass().then((passlist) => {
@@ -33,6 +48,19 @@ let checkPassExist = (password) => {
         })
         .catch((e) => {
             console.log(e + "");
+        })
+    })
+}
+
+let checkIdExist = (id) => {
+    return new Promise((resolve, reject) => {
+        getAllIdInUse().then((idlist) => {
+            idlist.forEach(element => {
+                if(element.id == id) {
+                    return reject(new Error("Không thể xóa thiết bị đang được dùng"));
+                }
+            });
+            resolve(id);
         })
     })
 }
@@ -78,7 +106,7 @@ let addDeviceAndReturn = (password) => { //  Cẩn thận với cái hàm mũi t
     .then(pass1 =>  getDeviceIdByPass(pass1)) 
 }
 
-let deleteDevice = (id) => {
+let deleteDevice = (id) => {// Xóa thiết bị,nếu thiết bị đang được dùng thì không xóa!
     if(id != '') {
         let q = "DELETE FROM device WHERE id = '" + id + "'";
         console.log(q+' devicee');
@@ -88,16 +116,23 @@ let deleteDevice = (id) => {
                     return reject(err);
                 }
                 else {
-                    resolve(result);
+                    resolve(id);//Xóa thành công thì trả về id của thiết bị vừa xóa
                 }
             });
         })
     }
 }
 
-let updateDevice = (id, pass, status) => {
-    if(id != '' && pass != '' && status != '') {
-        let q = "UPDATE device SET pass = '"  + pass+"', status = '" + status + "' WHERE id = '"+ id+"'";
+let deleteDeviceAndReturn = (id) => {// Xóa thiết bị,nếu thiết bị đang được dùng thì không xóa!
+    if(id != '') {
+        return checkIdExist(id)
+        .then(id_res => deleteDevice(id_res));
+    }
+}
+
+let updateDevice = (id, pass) => {
+    if(id != '' && pass != '') {
+        let q = "UPDATE device SET pass = '"  + pass+"' WHERE id = '"+ id+"'";
         console.log(q+' devicee');
         return new Promise((resolve, reject) => {
             conn.query(q, function(err, result) {
@@ -105,17 +140,24 @@ let updateDevice = (id, pass, status) => {
                     return reject(err);
                 }
                 else {
-                    resolve(result);
+                    resolve(pass);
                 }
             });
         })
     }
 }
 
+let updateDeviceAndReturn = (id, password) => {
+    return checkPassExist(password) 
+    .then(pass =>  updateDevice(id, pass)) 
+}
+ 
 module.exports = {
     addDevice: addDevice,
     deleteDevice: deleteDevice,
     updateDevice: updateDevice,
     getDeviceIdByPass: getDeviceIdByPass,
-    addDeviceAndReturn: addDeviceAndReturn
+    addDeviceAndReturn: addDeviceAndReturn,
+    deleteDeviceAndReturn: deleteDeviceAndReturn,
+    updateDeviceAndReturn: updateDeviceAndReturn
 }
