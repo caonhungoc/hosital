@@ -287,6 +287,39 @@ function updateDeviceStatus(id, status, callback) { // Cap nhat trang thai cua t
     })
 }
 
+function getPatientSensorData(id, device_id) {
+    if(id != '') {
+        return new Promise((resolve, reject) => {
+            let qq = "SELECT * FROM device_value WHERE patient_id ='" + id+"' and device_id='"+device_id+"'";
+            console.log(qq + " no dateout");
+            conn.query(qq, function(err, result) {
+                if(err) {
+                    return reject(err);
+                }else {
+                    resolve(result);
+                }
+            });
+        })
+    }
+}
+
+function getInfoForSearch(id_number) {
+    if(id_number) {
+        return new Promise((resolve, reject) => { 
+            let qq = "SELECT treat.treat_method, treat.doctor_guess, patient.name, patient.id, patient.device_id, treat.doctor_advice FROM treat, patient WHERE patient.id_number='"+id_number+"' and patient.date_out IS NULL and patient.id=treat.patient_id";
+            console.log(qq);
+            conn.query(qq, function(err, result) {
+                if(err) {
+                    return reject(err);
+                }else {
+                    resolve(result);
+                }
+            });
+        })
+    }
+}
+
+
 module.exports = {
     addPatient: addPatient,
     getDocctorByUsername: getDocctorByUsername,
@@ -298,5 +331,6 @@ module.exports = {
     updateDateOut: updateDateOut,
     getFreeDeviceList: getFreeDeviceList,
     updateDeviceStatus: updateDeviceStatus,
-    getPatientNoDateOut1:getPatientNoDateOut1
+    getPatientNoDateOut1:getPatientNoDateOut1,
+    getPatientSensorData: getPatientSensorData
 }

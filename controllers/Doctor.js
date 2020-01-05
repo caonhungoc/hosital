@@ -40,7 +40,7 @@ router.post("/signin", urlencodedParser, function(req, res) {
     
 })
 
-router.post("/search", urlencodedParser, function(req, res) {
+router.post("/searchqqq", urlencodedParser, function(req, res) {
     if(req.session.username) {
         var params = req.body;
         
@@ -62,7 +62,56 @@ router.post("/search", urlencodedParser, function(req, res) {
         }
     }
     else res.redirect("/doctor/signin");
+})
+
+router.post("/search", urlencodedParser, function(req, res) {
+    var params = req.body;
     
+    if(params.patient_id.trim().length == 0) {
+        console.log(params.patient_id+ " nnn");
+        res.render("./Doctor/search", {data: {info:"no info", name:req.session.doctorname, error: "ccc"}});
+    }else {
+        user_md.getInfoForSearch(params.patient_id)
+        .then(User => {
+        var patient_info = User[0];
+        console.log(patient_info + " hio");
+        if(User[0] != undefined) {
+            user_md.getPatientSensorData(User[0].id, User[0].device_id)
+            .then(data_chart => {
+                res.jsonp({
+                    data: {
+                        info:patient_info, 
+                        error:'', 
+                        name: req.session.doctorname, 
+                        chart_data: data_chart
+                    }
+                });
+            })
+            .catch(e => {
+                console.log("catch");
+                res.jsonp({
+                    data: {
+                        info:'', 
+                        error: e, 
+                        name: req.session.doctorname, 
+                        chart_data: ''
+                    }
+                });
+            })
+        }
+        else {
+            console.log("else");
+            res.jsonp({
+                data: {
+                    info:'', 
+                    error: "NOT FOUND!", 
+                    name: req.session.doctorname, 
+                    chart_data: ''
+                }
+            });
+        }
+    })
+    } 
 })
 
 router.get("/input", function(req, res) {
