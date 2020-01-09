@@ -18,19 +18,19 @@ router.post("/search", urlencodedParser, function(req, res) {
     var params = req.body;
     
     if(params.patient_id.trim().length == 0) {
-        console.log(params.patient_id+ " nnn");
+        
         res.render("./Patient/search", {data: {info:"no info", name: "Patient page", error: "ccc"}});
     }else {
         var data = user_md.getInfoForSearch(params.patient_id);
         if(data) {
             data.then(function(User) {
                 var patient_info = User[0];
-                console.log(patient_info.name+ " nnn" + patient_info.doctor_advice);
+                
                 
                 let chart_value = user_md.getPatientSensorData(patient_info.id, patient_info.device_id);
                 if(chart_value) {
                     chart_value.then(chart_data => {
-                        //console.log(chart_data);
+                       
                         res.jsonp({
                             data: {
                                 info:patient_info, 
@@ -46,8 +46,8 @@ router.post("/search", urlencodedParser, function(req, res) {
                 }
                 
             }).catch(e=>{
-                console.log("Eo co thang nay, ok?");
-                res.render("./Patient/search", {data: {info:"no info", name: "Patient page", error: "Eo co nguoi nay, ok? cmm"}});
+                
+                res.render("./Patient/search", {data: {info:"no info", name: "Patient page", error: "Không có người này."}});
             });
         }
     }

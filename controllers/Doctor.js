@@ -45,17 +45,14 @@ router.post("/searchqqq", urlencodedParser, function(req, res) {
         var params = req.body;
         
         if(params.patient_id.trim().length == 0) {
-            console.log(params.patient_id+ " nnn");
             res.render("./Doctor/search", {data: {info:"no info", name:req.session.doctorname, error: "ccc"}});
         }else {
             var data = user_md.getInfoForSearch(params.patient_id);
             if(data) {
                 data.then(function(User) {
                     var patient_info = User[0];
-                    console.log(patient_info.name+ " nnn" + patient_info.doctor_advice);
                     res.render("./Doctor/search", {data: {info:patient_info, error:'', name:req.session.doctorname}});
                 }).catch(e=>{
-                    console.log("Eo co thang nay, ok?");
                     res.render("./Doctor/search", {data: {info:"no info", name:req.session.doctorname, error: "Eo co nguoi nay, ok? cmm"}});
                 });
             }
@@ -68,13 +65,13 @@ router.post("/search", urlencodedParser, function(req, res) {
     var params = req.body;
     
     if(params.patient_id.trim().length == 0) {
-        console.log(params.patient_id+ " nnn");
+        
         res.render("./Doctor/search", {data: {info:"no info", name:req.session.doctorname, error: "ccc"}});
     }else {
         user_md.getInfoForSearch(params.patient_id)
         .then(User => {
         var patient_info = User[0];
-        console.log(patient_info + " hio");
+        
         if(User[0] != undefined) {
             user_md.getPatientSensorData(User[0].id, User[0].device_id)
             .then(data_chart => {
@@ -88,7 +85,7 @@ router.post("/search", urlencodedParser, function(req, res) {
                 });
             })
             .catch(e => {
-                console.log("catch");
+                
                 res.jsonp({
                     data: {
                         info:'', 
@@ -100,7 +97,7 @@ router.post("/search", urlencodedParser, function(req, res) {
             })
         }
         else {
-            console.log("else");
+            
             res.jsonp({
                 data: {
                     info:'', 
@@ -124,7 +121,7 @@ router.get("/input", function(req, res) {
                 var data = {
                     error : "Không có thiết bị rãnh nào."
                 };
-                //console.log("ccc321312");
+                
                 res.render("./Doctor/input", {error: data});
             })
         });
@@ -152,10 +149,7 @@ router.get("/signout", function(req, res) {
 });
 
 router.get("/add_date_out", function(req, res) {
-    // var x = user_md.getPatientNoDateOut1(31313122, (data) => {
-    //     if(data == false) return console.log("cccccccccccccccccccccc fuck");
-    //     console.log(data[0].device_id + " is id of device");
-    // });
+
     if(req.session.username) {
         res.render("./Doctor/add_date_out", {data: req.session.username, error: ''});
     }
@@ -167,7 +161,7 @@ router.get("/add_date_out", function(req, res) {
 router.post("/add_date_out", urlencodedParser, function(req, res) {
     var params = req.body;
     if(req.session.username) {
-        console.log("patient name = " + params.patient_id+', cmnd = '+params.date_out);
+        //console.log("patient name = " + params.patient_id+', cmnd = '+params.date_out);
         user_md.updateDateOut(params.patient_id, params.date_out, (data) => {
             data.then(function(User) {
                 res.render("./Doctor/add_date_out", {data: {error:'Successful update', name:req.session.doctorname}});
@@ -184,13 +178,12 @@ router.post("/add_date_out", urlencodedParser, function(req, res) {
 router.post("/input", urlencodedParser, function(req, ress) {
     var params = req.body;
     params.doctor_id = req.session.doctor_id;
-    console.log(params.device_id);
     
     if(req.session.username) {
         if(params.patient_name != '' && params.device_id != '' && params.patient_name != '' && params.patient_id != '' && params.birth_date != '' && params.date_in_d != '' && params.heart_rate != '' && params.time_heart_rate != '' && params.pp != '' && params.time_pp != '') {// need check more params from form
             var data = user_md.addPatientInfo(params, (res) => {
                 //insert data finished!
-                console.log("cccv");
+               
                 user_md.getFreeDeviceList( (data) => {
                     data.then(function(result) {
                         ress.render("./Doctor/input", {data:{doctor_name:  req.session.doctorname, error :"OK", device_list: result}}); 

@@ -8,7 +8,7 @@ var conn = db.getConnection();
 
 let getAllPass = () => { //Dựa vào mật khẩu để đảm bảo id gán cho thiết bị chính xác hơn
     let q = "SELECT * from device";
-    console.log(q+' get all pass');
+    
     return new Promise((resolve, reject) => {
         conn.query(q, function(err, result) {
             if(err) {
@@ -23,7 +23,7 @@ let getAllPass = () => { //Dựa vào mật khẩu để đảm bảo id gán ch
 
 let getAllIdInUse = () => { //Dựa vào mật khẩu để đảm bảo id gán cho thiết bị chính xác hơn
     let q = "SELECT * from device where status = 1";
-    console.log(q+' get all id in use');
+    
     return new Promise((resolve, reject) => {
         conn.query(q, function(err, result) {
             if(err) {
@@ -67,7 +67,7 @@ let checkIdExist = (id) => {
 
 let getDeviceIdByPass = (pass) => {
     let q = "SELECT * from device where pass = '"+pass+"'" ;
-    console.log(q+' get device by pass');
+    
     return new Promise((resolve, reject) => {
         conn.query(q, function(err, result) {
             if(err) {
@@ -86,7 +86,7 @@ let getDeviceIdByPass = (pass) => {
 let addDevice = (pass) => {
     if(pass != '') {
         let q = "INSERT INTO device (status, pass) VALUES (0,'" + pass +"')";
-        console.log(q+' devicee');
+        
         return new Promise((resolve, reject) => {
             conn.query(q, function(err, result) {
                 if(err) {
@@ -100,16 +100,16 @@ let addDevice = (pass) => {
     }
 }
 
-let addDeviceAndReturn = (password) => { //  Cẩn thận với cái hàm mũi tên này, nếu chỉ có 1 dòng, nó tương đương với return, bay mẹ nó não
-    return checkPassExist(password) // https://www.youtube.com/watch?v=FmsvKGYd9Kk&list=PLzrVYRai0riRaLjgZe00gPMyLI1NdWcpL&index=9
-    .then(pass =>  addDevice(pass)) // Xem kỹ mấy bài đầu của link trên
+let addDeviceAndReturn = (password) => { 
+    return checkPassExist(password) 
+    .then(pass =>  addDevice(pass)) 
     .then(pass1 =>  getDeviceIdByPass(pass1)) 
 }
 
 let deleteDevice = (id) => {// Xóa thiết bị,nếu thiết bị đang được dùng thì không xóa!
     if(id != '') {
         let q = "DELETE FROM device WHERE id = '" + id + "'";
-        console.log(q+' devicee');
+        
         return new Promise((resolve, reject) => {
             conn.query(q, function(err, result) {
                 if(err) {
@@ -133,7 +133,7 @@ let deleteDeviceAndReturn = (id) => {// Xóa thiết bị,nếu thiết bị đa
 let updateDevice = (id, pass) => {
     if(id != '' && pass != '') {
         let q = "UPDATE device SET pass = '"  + pass+"' WHERE id = '"+ id+"'";
-        console.log(q+' devicee');
+        
         return new Promise((resolve, reject) => {
             conn.query(q, function(err, result) {
                 if(err) {

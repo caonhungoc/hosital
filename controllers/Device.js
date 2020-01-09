@@ -48,7 +48,7 @@ router.post("/add", urlencodedParser, function(req, res) {
     if(req.session.username && params.pass != '') {
         device_md.addDeviceAndReturn(params.pass)
         .then( device => {
-            console.log(device + ' hello = ' + device.id);
+           
             res.jsonp({
                 data: {
                     device_id: device.id, 
@@ -77,7 +77,7 @@ router.post("/delete", urlencodedParser, function(req, res) {
     if(req.session.username && params.id != '') {
         device_md.deleteDeviceAndReturn(params.id)
         .then( id => {
-            console.log(' delete = ' + id);
+            
             res.jsonp({
                 data: {
                     device_id: id, 

@@ -87,9 +87,7 @@
 				event.preventDefault(); //prevent default action 
 				var post_url = $(this).attr("action"); //get form action url
 				var request_method = $(this).attr("method"); //get form GET/POST method
-				//alert(request_method + " is request method " + post_url);
-				//const dataContainer = document.getElementsById('#my_form')[0];
-				//dataContainer.textContent = JSON.stringify(data, null, "  ");
+				
 				var form_data = $(this).serializeArray(); //Encode form elements for submissiondataContainer.textContent = JSON.stringify(data, null, "  ");
 				
 				$.ajax({
@@ -109,9 +107,9 @@
 							heart_rate.push(element.heart_rate);
 						});
 					}
-					//alert(" vc"+ time[0] + ' '+ d.data.data_chart + ' ' + d.data.info);
+					
 					if(d.data.chart_data != undefined && d.data.info != undefined) {
-						//alert(" vc"+ time[0] + ' '+ data.data_chart);
+						
 						chart_config.data.labels = time;
       					chart_config.data.datasets[0].data = pp;
       					chart_config.data.datasets[1].data = heart_rate;
@@ -123,7 +121,7 @@
 						$("#treat_method").val(d.data.info.treat_method+'');
 					}
 					else {
-						//Dòng này không thấy vào bao giờ, magic gì đây?
+						
 						alert("Người này ra viện rồi!");
 						$("#error").val(data.error + '');
 					}
