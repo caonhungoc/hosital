@@ -101,15 +101,19 @@
 					d = JSON.parse(d);
 					//console.log(json.data.info.name);
 					var time = [], pp = [], heart_rate = [];
-					d.data.chart_data.forEach(element => {
-						time.push(element.time);
-						pp.push(element.pp);
-						heart_rate.push(element.heart_rate);
-					});
-					if(data.data_chart != '') {
-						alert(" vc"+ time[0]);
+					if(d.data.chart_data != '') 
+					{
+						d.data.chart_data.forEach(element => {
+							time.push(element.time);
+							pp.push(element.pp);
+							heart_rate.push(element.heart_rate);
+						});
+					}
+
+					if(d.data.chart_data != undefined && d.data.info != undefined) {
+						
 						chart_config.data.labels = time;
-      					chart_config.data.datasets[0].data = pp
+      					chart_config.data.datasets[0].data = pp;
       					chart_config.data.datasets[1].data = heart_rate;
 						line_chart.update();
 						  
@@ -119,8 +123,26 @@
 						$("#treat_method").val(d.data.info.treat_method+'');
 					}
 					else {
-						alert("xxxxx");
+						
+						alert("Người này ra viện rồi!");
+						$("#error").val(data.error + '');
 					}
+
+					// if(data.data_chart != '') {
+					// 	alert(" vc"+ time[0]);
+					// 	chart_config.data.labels = time;
+      				// 	chart_config.data.datasets[0].data = pp
+      				// 	chart_config.data.datasets[1].data = heart_rate;
+					// 	line_chart.update();
+						  
+					// 	//update infor
+					// 	$("#patient_name").val(d.data.info.name+'');
+					// 	$("#guess").val(d.data.info.doctor_guess+'');
+					// 	$("#treat_method").val(d.data.info.treat_method+'');
+					// }
+					// else {
+					// 	alert("xxxxx");
+					// }
 				});
 			});
 		}

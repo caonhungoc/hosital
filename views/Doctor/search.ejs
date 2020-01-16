@@ -32,13 +32,13 @@
 				data: {
 				labels: ["January", "Feb"],
 				datasets: [{
-					label: "Temperature",
+					label: "Heart rate",
 					data: [65, 66],
 					backgroundColor: ['rgba(221, 199, 167, .4)'],
 					borderColor: ['rgba(221, 199, 167, 0.9)'],
 					yAxisID: 'y-axis-1',
 				}, {
-					label: "Humidity",
+					label: "BP",
 					data: [28, 21],
 					backgroundColor: ['rgba(154, 196, 159, .8)'],
 					borderColor: ['rgba(154, 196, 159, .9)'],
@@ -162,16 +162,10 @@
 					<div class="form2__top">
 						<div class="row">
 							<div class=" col col1">
-								<p class="row__ttl">Mã bệnh nhân:</p>
+								<p class="row__ttl">Chứng minh nhân dân:</p>
 								<input type="text" name="patient_id">
 							</div>
-							<div class="col col2">
-								
-								<p class="row__ttl pad" id='error'><%= data.error %></p>
-								
-								<p class="row__ttl pad">Họ tên bệnh nhân:</p>
-								<input type="text" name='patient_name'>
-							</div>
+							
 							<input class="btn" type="submit" value='TÌM KIẾM'/>
 						</div>
 					</div>
@@ -219,7 +213,7 @@
 					<div class="row">
 						<div class=" col col8">
 							<p class="row__ttl">Lời dặn của bác sĩ:</p>
-							<input type="text" class="area" id="doctor_advice>
+							<input type="text" class="area" id="doctor_advice">
 						</div>					
 					</div>
 				</div>

@@ -21,35 +21,46 @@ router.post("/search", urlencodedParser, function(req, res) {
         
         res.render("./Patient/search", {data: {info:"no info", name: "Patient page", error: "ccc"}});
     }else {
-        var data = user_md.getInfoForSearch(params.patient_id);
-        if(data) {
-            data.then(function(User) {
-                var patient_info = User[0];
+        user_md.getInfoForSearch(params.patient_id)
+        .then(User => {
+        var patient_info = User[0];
+        console.log(User[0]);
+        if(User[0] != undefined) {
+            user_md.getPatientSensorData(User[0].id, User[0].device_id)
+            .then(data_chart => {
+                res.jsonp({
+                    data: {
+                        info:patient_info, 
+                        error:'', 
+                        name: req.session.doctorname, 
+                        chart_data: data_chart
+                    }
+                });
+            })
+            .catch(e => {
                 
-                
-                let chart_value = user_md.getPatientSensorData(patient_info.id, patient_info.device_id);
-                if(chart_value) {
-                    chart_value.then(chart_data => {
-                       
-                        res.jsonp({
-                            data: {
-                                info:patient_info, 
-                                error:'', 
-                                name:"Patient page", 
-                                chart_data: chart_data
-                            }
-                        });
-                        //res.render("./Patient/search", {data: {info:patient_info, error:'', name:"Patient page", chart_data: chart_data}});
-                    }).catch(e=>{
-                        console.log(e);
-                    });
+                res.jsonp({
+                    data: {
+                        info:'', 
+                        error: e, 
+                        name: req.session.doctorname, 
+                        chart_data: ''
+                    }
+                });
+            })
+        }
+        else {
+            console.log("undefined");
+            res.jsonp({
+                data: {
+                    info:'', 
+                    error: "NOT FOUND!", 
+                    name: req.session.doctorname, 
+                    chart_data: ''
                 }
-                
-            }).catch(e=>{
-                
-                res.render("./Patient/search", {data: {info:"no info", name: "Patient page", error: "Không có người này."}});
             });
         }
+    })
     }
 })
 
