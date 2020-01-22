@@ -37,10 +37,10 @@ function getPatientNoDateOut(device_id) {
     }
 }
 
-function insertDeviceValue(device_id, heart_rate, pp, time, patient_id) {
+function insertDeviceValue(device_id, heart_rate, sys, dia, time, patient_id) {
     if(device_id != '' && heart_rate != '' && pp != '') {
         return new Promise((resolve, reject) => {
-            let sql = "INSERT INTO device_value (device_id, heart_rate, pp, time, patient_id) VALUES ('"+device_id+"','"+heart_rate+"','"+ pp+"','"+time+"','"+patient_id+"')";
+            let sql = "INSERT INTO device_value (device_id, heart_rate, sys, dia, time, patient_id) VALUES ('"+device_id+"','"+heart_rate+"','"+ sys+"','"+dia+"', '"+time+"','"+patient_id+"')";
             
             conn.query(sql, function(err, result) {
                 if(err) {
@@ -54,11 +54,11 @@ function insertDeviceValue(device_id, heart_rate, pp, time, patient_id) {
     }
 }
 
-function addDeviceValue(device_id, heart_rate, pp, time) {
+function addDeviceValue(device_id, heart_rate, sys, dia, time) {
     if(device_id) {
         getPatientNoDateOut(device_id)
         .then((user) => {
-            insertDeviceValue(device_id, heart_rate, pp, time, user[0].id);
+            insertDeviceValue(device_id, heart_rate, sys, dia, time, user[0].id);
         }).catch(e => {
             console.log(e + "");
         })

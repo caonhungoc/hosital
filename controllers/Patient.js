@@ -2,7 +2,7 @@ var express = require("express");
 var bodyParser = require('body-parser');
 var router = express.Router();
 
-var user_md = require("../models/Patient");
+var user_md = require("../models/patient");
 var urlencodedParser = bodyParser.urlencoded({ extended: false });
 
 router.get("/", function(req, res) {

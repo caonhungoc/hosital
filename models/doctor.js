@@ -152,14 +152,16 @@ function getPatientNoDateOut1(id) {
         console.log('nodateout ' + qq);
         var query = conn.query(qq, function(err, result) {
             if(err) {
+                console.log("error in add");
                 defer.reject(err);
             }else {
+                console.log("successful in add");
                 defer.resolve(result);
             }
         });
         return defer.promise;
     }
-    return false;
+    else return false;
 }
 
 function getPatientNoDateOut(id, callback) {
@@ -278,7 +280,7 @@ function addPatientInfo(params, callback) {
                 });
               }  
       
-              let sql = "INSERT INTO device_value (device_id, heart_rate, pp, time, patient_id) VALUES ('"+params.device_id+"','"+params.heart_rate+"','"+ params.pp+"','"+params.time+"','"+x+"')";
+              let sql = "INSERT INTO device_value (device_id, heart_rate, sys, dia, time, patient_id) VALUES ('"+params.device_id+"','"+params.heart_rate+"','"+ params.sys+"','"+params.dia+"', '"+params.time+"','"+x+"')";
               
               conn.query(sql, function(err, result) {
                   if (err) { 

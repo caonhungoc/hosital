@@ -160,29 +160,33 @@ router.get("/add_date_out", function(req, res) {
 
 router.post("/add_date_out", urlencodedParser, function(req, res) {
     var params = req.body;
-    if(req.session.username) {
-        //console.log("patient name = " + params.patient_id+', cmnd = '+params.date_out);
+    if(req.session.username && params.patient_id != '' && params.patient_id >= 0) {
+        //console.log("patient name = " + params.patient_id+', cmnd = '+params.date_out); patient_id
         user_md.updateDateOut(params.patient_id, params.date_out, (data) => {
             data.then(function(User) {
                 res.render("./Doctor/add_date_out", {data: {error:'Successful update', name:req.session.doctorname}});
             }).catch(e=>{
-                res.render("./Doctor/add_date_out", {data: {error:'Can not update', name:req.session.doctorname}});
+                res.render("./Doctor/add_date_out", {data: {error:'Can not update 1', name:req.session.doctorname}});
             });
         });
     }
     else {
-        res.send("Access denied!");
+        res.render("./Doctor/add_date_out", {data: {error:'Can not update', name:req.session.doctorname}});
+        //res.send("Access denied!");
     }
 })
 
 router.post("/input", urlencodedParser, function(req, ress) {
     var params = req.body;
+    var xx = params.sys;
+    var t = typeof xx;
+    console.log(t + ' type' + xx);
     params.doctor_id = req.session.doctor_id;
     
     if(req.session.username) {
         user_md.checkAddPatienCondition(params.patient_id)
         .then(data => {
-            if(params.patient_name != '' && params.device_id != '' && params.patient_name != '' && params.patient_id != '' && params.birth_date != '' && params.date_in_d != '' && params.heart_rate != '' && params.time_heart_rate != '' && params.pp != '' && params.time_pp != '' ) {// need check more params from form
+            if(params.patient_name != '' && params.device_id != '' && params.patient_name != '' && params.patient_id != '' && params.birth_date != '' && params.date_in_d != '' && params.heart_rate != '' && params.time_heart_rate != '' && params.sys >= 0 && params.dia >= 0 && params.time_pp != '' ) {// need check more params from form
                 var data = user_md.addPatientInfo(params, (res) => {
                     //insert data finished!
                    
