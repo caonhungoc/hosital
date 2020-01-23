@@ -24,6 +24,7 @@ function addPatient(user) {
 }
 
 function getDocctorByUsername(user_name) {
+    console.log(('1234'-12) + ' returnnn');
     if(user_name) {
         var defer = q.defer();
         let qq = "SELECT * FROM doctor WHERE user_name ='" + user_name+"'";//// sql injection here????
@@ -42,7 +43,7 @@ function getDocctorByUsername(user_name) {
 }
 
 function getPatientByID(id) {
-    if(id) {
+    if(id && db.IsNumeric(id)) {
         var defer = q.defer();
         let qq = "SELECT * FROM patient WHERE id_number ='" + id+"'";
         
@@ -56,7 +57,7 @@ function getPatientByID(id) {
 
         return defer.promise;
     }
-    return false;
+    else return false;
 }
 
 function getInfoForSearch1(id_number) {
@@ -76,7 +77,7 @@ function getInfoForSearch1(id_number) {
 }
 
 function getInfoForSearch(id_number) {
-    if(id_number) {
+    if(id_number && db.IsNumeric(id_number)) {
         return new Promise((resolve, reject) => { 
             let qq = "SELECT treat.treat_method, treat.doctor_guess, patient.name, patient.id, patient.device_id, treat.doctor_advice FROM treat, patient WHERE patient.id_number='"+id_number+"' and patient.date_out IS NULL and patient.id=treat.patient_id";
             
@@ -89,10 +90,13 @@ function getInfoForSearch(id_number) {
             });
         })
     }
+    else {
+        return false;
+    }
 }
 
 function addPatient(params) {
-    if(params) {
+    if(params && db.IsNumeric(params.id) && db.IsNumeric(params.device_id)) {
         var defer = q.defer();
         let sql = "INSERT INTO patient (name, id_number, date_in, device_id) VALUES ("+params.patient_name+","+params.id+","+ params.date_in+","+params.device_id+")";
         var query = conn.query(sql, function(err, result) {
@@ -106,11 +110,13 @@ function addPatient(params) {
 
         return defer.promise;
     }
-    return false;
+    else {
+        return false;
+    }
 }
 
 function addTreat(params) {
-    if(params) {
+    if(params && db.IsNumeric(params.doctor_id) && db.IsNumeric(params.patient_id)) {
         var defer = q.defer();
         let sql = "INSERT INTO treat (doctor_id, patient_id, doctor_guess, treat_method) VALUES ("+params.doctor_id+","+params.patient_id+","+ params.doctor_guess+","+params.treat_method+")";
         var query = conn.query(sql, function(err, result) {
@@ -124,25 +130,9 @@ function addTreat(params) {
 
         return defer.promise;
     }
-    return false;
-}
-
-function addDeviceValue(params) {
-    if(params) {
-        var defer = q.defer();
-        let sql = "INSERT INTO device_value (device_id, heart_rate, pp, time) VALUES ("+params.doctor_id+","+params.heart_rate+","+ params.pp+","+params.time+")";
-        var query = conn.query(sql, function(err, result) {
-            if(err) {
-                defer.reject(err);
-            }
-            else {
-                defer.resolve(result);
-            }
-        });
-
-        return defer.promise;
+    else {
+        return false;
     }
-    return false;
 }
 
 function getPatientNoDateOut1(id) {
@@ -430,7 +420,6 @@ module.exports = {
     getDocctorByUsername: getDocctorByUsername,
     getPatientByID: getPatientByID,
     addTreat: addTreat,
-    addDeviceValue: addDeviceValue,
     getInfoForSearch: getInfoForSearch,
     addPatientInfo: addPatientInfo,
     updateDateOut: updateDateOut,

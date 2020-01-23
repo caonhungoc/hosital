@@ -4,7 +4,7 @@ var db = require("../common/database");
 var conn = db.getConnection();
 
 function getPatientByID(id) {
-    if(id) {
+    if(id && db.IsNumeric(id)) {
         var defer = q.defer();
         let qq = "SELECT * FROM patient WHERE id_number ='" + id+"'";
         
@@ -18,7 +18,9 @@ function getPatientByID(id) {
 
         return defer.promise;
     }
-    return false;
+    else {
+        return false;
+    }
 }
 
 function getInfoForSearch1(id_number) {
@@ -54,7 +56,7 @@ function getInfoForSearch(id_number) {
 }
 
 function getPatientNoDateOut(id) {
-    if(id) {
+    if(id && db.IsNumeric(id)) {
         var defer = q.defer();
         let qq = "SELECT * FROM patient WHERE id_number ='" + id+"' and date_out IS NULL";
         
@@ -67,11 +69,13 @@ function getPatientNoDateOut(id) {
         });
         return defer.promise;
     }
-    return false;
+    else {
+        return false;
+    }
 }
 
 function getPatientSensorData(id, device_id) {
-    if(id) {
+    if(id && db.IsNumeric(id)) {
         var defer = q.defer();
         let qq = "SELECT * FROM device_value WHERE patient_id ='" + id+"' and device_id='"+device_id+"'";
         
@@ -84,7 +88,9 @@ function getPatientSensorData(id, device_id) {
         });
         return defer.promise;
     }
-    return false;
+    else {
+        return false;
+    }
 }
 
 module.exports = {

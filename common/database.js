@@ -17,6 +17,11 @@ var connection = mysql.createConnection({
       return connection;
   }
 
+function IsNumeric(input) {
+    return (input - 0) == input && (''+input).trim().length > 0;
+}
+
   module.exports = {
-      getConnection: getConnection
+      getConnection: getConnection,
+      IsNumeric: IsNumeric
   }
