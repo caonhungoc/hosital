@@ -2,229 +2,308 @@ var express = require("express");
 var bodyParser = require('body-parser');
 var router = express.Router();
 
-var user_md = require("../models/doctor");
-var urlencodedParser = bodyParser.urlencoded({ extended: false });
+var doctor_md = require("../models/doctor");
+var device_md = require("../models/device");
+var patient_md = require("../models/patient");
 
-router.get("/signin", function(req, res) {
-    if(req.session.username) {
-        res.redirect("/doctor/input");
-    }
-    else {
-        res.render("./Doctor/index", {data: {}});
-    }
+var urlencodedParser = bodyParser.urlencoded({
+  extended: false
 });
 
-router.post("/signin", urlencodedParser, function(req, res) {
-    var params = req.body;
+router.get("/signin", function (req, res) {
+  if (req.session.username) {
+    res.redirect("/doctor/input");
+  } else {
+    res.render('./Doctor/index', {
+      data: {}
+    });
+  }
+});
 
-    if(params.username.trim().length == 0) {
-        res.render("./Doctor/index", {data: {error: "Please enter an username !!!"}});
-    }else {
-        var data = user_md.getDocctorByUsername(params.username);
-        if(data) {
-            data.then(function(User) {
-                var user = User[0];
-                if(params.password != user.password) {
-                    res.render("./Doctor/index", {data: {error: "Wrong password !!!"}});
-                } else {
-                    req.session.username = user.user_name;
-                    req.session.doctorname = user.name;
-                    req.session.doctor_id = user.id;
-                    res.redirect("/doctor/input");
-                }
-            });
-        }else {
-            res.render("signin", {data: {error : "User not exist!"}});
-        }
-    }
-    
-})
+router.post("/signin", urlencodedParser, function (req, res) {
+  var params = req.body;
 
-router.post("/searchqqq", urlencodedParser, function(req, res) {
-    if(req.session.username) {
-        var params = req.body;
-        
-        if(params.patient_id.trim().length == 0) {
-            res.render("./Doctor/search", {data: {info:"no info", name:req.session.doctorname, error: "ccc"}});
-        }else {
-            var data = user_md.getInfoForSearch(params.patient_id);
-            if(data) {
-                data.then(function(User) {
-                    var patient_info = User[0];
-                    res.render("./Doctor/search", {data: {info:patient_info, error:'', name:req.session.doctorname}});
-                }).catch(e=>{
-                    res.render("./Doctor/search", {data: {info:"no info", name:req.session.doctorname, error: "Eo co nguoi nay, ok? cmm"}});
-                });
+  if (params.username.trim().length == 0) {
+    res.render("./Doctor/index", {
+      data: {
+        error: "Please enter an username !!!"
+      }
+    });
+  } else {
+    var data = doctor_md.getDoctorByUsername(params.username);
+    if (data) {
+      data.then(function (User) {
+        var user = User[0];
+        if (params.password != user.password) {
+          res.render("./Doctor/index", {
+            data: {
+              error: "Wrong password !!!"
             }
+          });
+        } else {
+          req.session.username = user.user_name;
+          req.session.doctorname = user.name;
+          req.session.doctor_id = user.id;
+          res.redirect("/doctor/input");
         }
+      });
+    } else {
+      res.render("signin", {
+        data: {
+          error: "User not exist!"
+        }
+      });
     }
-    else res.redirect("/doctor/signin");
+  }
 })
 
-router.post("/search", urlencodedParser, function(req, res) {
+router.post("/searchqqq", urlencodedParser, function (req, res) {
+  if (req.session.username) {
     var params = req.body;
-    
-    if(params.patient_id.trim().length == 0) {
-        
-        res.render("./Doctor/search", {data: {info:"no info", name:req.session.doctorname, error: "ccc"}});
-    }else {
-        user_md.getInfoForSearch(params.patient_id)
-        .then(User => {
+
+    if (params.patient_id.trim().length == 0) {
+      res.render("./Doctor/search", {
+        data: {
+          info: "no info",
+          name: req.session.doctorname,
+          error: "ccc"
+        }
+      });
+    } else {
+      var data = doctor_md.getInfoForSearch(params.patient_id);
+      if (data) {
+        data.then(function (User) {
+          var patient_info = User[0];
+          res.render("./Doctor/search", {
+            data: {
+              info: patient_info,
+              error: '',
+              name: req.session.doctorname
+            }
+          });
+        }).catch(e => {
+          res.render("./Doctor/search", {
+            data: {
+              info: "no info",
+              name: req.session.doctorname,
+              error: "Eo co nguoi nay, ok? cmm"
+            }
+          });
+        });
+      }
+    }
+  } else res.redirect("/doctor/signin");
+})
+
+router.post("/search", urlencodedParser, function (req, res) {
+  var params = req.body;
+
+  if (params.patient_id.trim().length == 0) {
+
+    res.render("./Doctor/search", {
+      data: {
+        info: "no info",
+        name: req.session.doctorname,
+        error: "ccc"
+      }
+    });
+  } else {
+    doctor_md.getInfoForSearch(params.patient_id)
+      .then(User => {
         var patient_info = User[0];
-        
-        if(User[0] != undefined) {
-            user_md.getPatientSensorData(User[0].id, User[0].device_id)
+
+        if (User[0] != undefined) {
+          doctor_md.getPatientSensorData(User[0].id, User[0].device_id)
             .then(data_chart => {
-                res.jsonp({
-                    data: {
-                        info:patient_info, 
-                        error:'', 
-                        name: req.session.doctorname, 
-                        chart_data: data_chart
-                    }
-                });
+              res.jsonp({
+                data: {
+                  info: patient_info,
+                  error: '',
+                  name: req.session.doctorname,
+                  chart_data: data_chart
+                }
+              });
             })
             .catch(e => {
-                
-                res.jsonp({
-                    data: {
-                        info:'', 
-                        error: e, 
-                        name: req.session.doctorname, 
-                        chart_data: ''
-                    }
-                });
-            })
-        }
-        else {
-            
-            res.jsonp({
+
+              res.jsonp({
                 data: {
-                    info:'', 
-                    error: "NOT FOUND!", 
-                    name: req.session.doctorname, 
-                    chart_data: ''
+                  info: '',
+                  error: e,
+                  name: req.session.doctorname,
+                  chart_data: ''
                 }
-            });
-        }
-    })
-    } 
-})
-
-router.get("/input", function(req, res) {
-    if(req.session.username) {
-        var data = user_md.getFreeDeviceList((data)=> {
-            data.then(function(result) {
-                //res.render("./Doctor/input", {data: req.session.doctorname});
-                res.render("./Doctor/input", {data: {doctor_name: req.session.doctorname, device_list: result}});
-            }).catch(function(err){
-                var data = {
-                    error : "Không có thiết bị rãnh nào."
-                };
-                
-                res.render("./Doctor/input", {error: data});
+              });
             })
-        });
-    }
-    else res.redirect("/doctor/signin");
-});
+        } else {
 
-router.get("/search", function(req, res) {
-    if(req.session.username) {
-        res.render("./Doctor/search", {data: {name: req.session.doctorname, error: '', info:'no info'}});
-    }
-    else res.redirect("/doctor/signin");
-});
-
-router.get("/signout", function(req, res) {
-    if(req.session.username) {
-        req.session.destroy((err) => {
-            if(err) {
-                return console.log(err);
+          res.jsonp({
+            data: {
+              info: '',
+              error: "NOT FOUND!",
+              name: req.session.doctorname,
+              chart_data: ''
             }
-            res.redirect('/doctor/signin');
-        });
-    }
-    else res.redirect("/doctor/signin");
-});
-
-router.get("/add_date_out", function(req, res) {
-
-    if(req.session.username) {
-        res.render("./Doctor/add_date_out", {data: req.session.username, error: ''});
-    }
-    else {
-        res.render("./Doctor/index", {data: {}, error : ''});
-    }
-});
-
-router.post("/add_date_out", urlencodedParser, function(req, res) {
-    var params = req.body;
-    if(req.session.username && params.patient_id != '' && params.patient_id >= 0) {
-        //console.log("patient name = " + params.patient_id+', cmnd = '+params.date_out); patient_id
-        user_md.updateDateOut(params.patient_id, params.date_out, (data) => {
-            data.then(function(User) {
-                res.render("./Doctor/add_date_out", {data: {error:'Successful update', name:req.session.doctorname}});
-            }).catch(e=>{
-                res.render("./Doctor/add_date_out", {data: {error:'Can not update 1', name:req.session.doctorname}});
-            });
-        });
-    }
-    else {
-        res.render("./Doctor/add_date_out", {data: {error:'Can not update', name:req.session.doctorname}});
-        //res.send("Access denied!");
-    }
+          });
+        }
+      })
+  }
 })
 
-router.post("/input", urlencodedParser, function(req, ress) {
-    var params = req.body;
-    var xx = params.sys;
-    var t = typeof xx;
-    console.log(t + ' type' + xx);
-    params.doctor_id = req.session.doctor_id;
-    
-    if(req.session.username) {
-        user_md.checkAddPatienCondition(params.patient_id)
-        .then(data => {
-            if(params.patient_name != '' && params.device_id != '' && params.patient_name != '' && params.patient_id != '' && params.birth_date != '' && params.date_in_d != '' && params.heart_rate != '' && params.time_heart_rate != '' && params.sys >= 0 && params.dia >= 0 && params.time_pp != '' ) {// need check more params from form
-                var data = user_md.addPatientInfo(params, (res) => {
-                    //insert data finished!
-                   
-                    user_md.getFreeDeviceList( (data) => {
-                        data.then(function(result) {
-                            ress.render("./Doctor/input", {data:{doctor_name:  req.session.doctorname, error :"OK", device_list: result}}); 
-                        }).catch(function(e) {
-                            console.log("eerrrr1 "+ e);
-                            throw e;
-                        })  
-                    });
+router.get("/input", function (req, res) {
+  if (req.session.username) {
+    var data = doctor_md.getFreeDeviceList((data) => {
+      data.then(function (result) {
+        res.render("./Doctor/input", {
+          data: {
+            doctor_name: req.session.doctorname,
+            device_list: result
+          }
+        });
+      }).catch(function (err) {
+        var data = {
+          error: "Không có thiết bị rãnh nào."
+        };
+
+        res.render("./Doctor/input", {
+          error: data
+        });
+      })
+    });
+  } else res.redirect("/doctor/signin");
+});
+
+router.get("/search", function (req, res) {
+  if (req.session.username) {
+    res.render("./Doctor/search", {
+      data: {
+        name: req.session.doctorname,
+        error: '',
+        info: 'no info'
+      }
+    });
+  } else res.redirect("/doctor/signin");
+});
+
+router.get("/signout", function (req, res) {
+  if (req.session.username) {
+    req.session.destroy((err) => {
+      if (err) {
+        console.log(err);
+      }
+      res.render('./Doctor/index', {data: {}});
+    });
+  } else res.redirect("/doctor/signin");
+});
+
+router.get("/add_date_out", function (req, res) {
+
+  if (req.session.username) {
+    res.render("./Doctor/add_date_out", {
+      data: req.session.username,
+      error: ''
+    });
+  } else {
+    res.render("./Doctor/index", {
+      data: {},
+      error: ''
+    });
+  }
+});
+
+router.post("/add_date_out", urlencodedParser, function (req, res) {
+  var params = req.body;
+  if (req.session.username && params.patient_id != '' && params.patient_id >= 0) {
+    //console.log("patient name = " + params.patient_id+', cmnd = '+params.date_out); patient_id
+    doctor_md.updateDateOut(params.patient_id, params.date_out, (data) => {
+      data.then(function (User) {
+        res.render("./Doctor/add_date_out", {
+          data: {
+            error: 'Successful update',
+            name: req.session.doctorname
+          }
+        });
+      }).catch(e => {
+        res.render("./Doctor/add_date_out", {
+          data: {
+            error: 'Can not update 1',
+            name: req.session.doctorname
+          }
+        });
+      });
+    });
+  } else {
+    res.render("./Doctor/add_date_out", {
+      data: {
+        error: 'Can not update',
+        name: req.session.doctorname
+      }
+    });
+  }
+})
+
+router.post("/input", urlencodedParser, function (req, ress) {
+  var params = req.body;
+  var xx = params.sys;
+  var t = typeof xx;
+  console.log(t + ' type' + xx);
+  params.doctor_id = req.session.doctor_id;
+
+  if (req.session.username) {
+    doctor_md.checkAddPatienCondition(params.patient_id)
+      .then(data => {
+        if (params.patient_name != '' && params.device_id != '' && params.patient_name != '' && params.patient_id != '' && params.birth_date != '' && params.date_in_d != '' && params.heart_rate != '' && params.time_heart_rate != '' && params.sys >= 0 && params.dia >= 0 && params.time_pp != '') { // need check more params from form
+          var data = doctor_md.addPatientInfo(params, (res) => {
+            //insert data finished!
+
+            doctor_md.getFreeDeviceList((data) => {
+              data.then(function (result) {
+                ress.render("./Doctor/input", {
+                  data: {
+                    doctor_name: req.session.doctorname,
+                    error: "OK",
+                    device_list: result
+                  }
                 });
-            }
-            else {
-                var data1 = user_md.getFreeDeviceList((data1)=> {
-                    data1.then(function(result) {
-                        ress.render("./Doctor/input", {data:{doctor_name:  req.session.doctorname, error :"NOT OK", device_list: result}}); 
-                    }).catch(function(e) {
-                        console.log("eerrrr2 " + e);
-                        throw e;
-                    })  
-                });
-            }
-        }).catch(err => {
-            console.log('err = ' + err);
-            user_md.getFreeDeviceList((data1)=> {
-                data1.then(function(result) {
-                    ress.render("./Doctor/input", {data:{doctor_name:  req.session.doctorname, error :"NOT OK", device_list: result}}); 
-                }).catch(function(e) {
-                    console.log("eerrrr2 " + e);
-                    throw e;
-                })  
+              }).catch(function (e) {
+                throw e;
+              })
             });
-        })
-    }
-    else {
-        ress.send("Access denied!");
-    }
+          });
+        } else {
+          var data1 = doctor_md.getFreeDeviceList((data1) => {
+            data1.then(function (result) {
+              ress.render("./Doctor/input", {
+                data: {
+                  doctor_name: req.session.doctorname,
+                  error: "NOT OK",
+                  device_list: result
+                }
+              });
+            }).catch(function (e) {
+              throw e;
+            })
+          });
+        }
+      }).catch(err => {
+        console.log('err = ' + err);
+        doctor_md.getFreeDeviceList((data1) => {
+          data1.then(function (result) {
+            ress.render("./Doctor/input", {
+              data: {
+                doctor_name: req.session.doctorname,
+                error: "NOT OK",
+                device_list: result
+              }
+            });
+          }).catch(function (e) {
+            throw e;
+          })
+        });
+      })
+  } else {
+    ress.send("Access denied!");
+  }
 })
 
 module.exports = router;

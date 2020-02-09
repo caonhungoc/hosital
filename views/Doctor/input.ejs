@@ -1,97 +1,114 @@
-
 <!DOCTYPE html>
 <html>
+
 <head>
-	<meta charset="utf-8">
-	<meta name="format-detection" content="telephone=no">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
-	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
-	<title>DEMO</title>
-	<!--css-->
-	<link href="/static/css/style.min.css" rel="stylesheet" media="all">
-	<!-- Favicons -->
-	<link rel="icon" href="img/favicon.png" type="image/vnd.microsoft.icon">
+  <meta charset="utf-8">
+  <meta name="format-detection" content="telephone=no">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
+  <title>DEMO</title>
+  <!--css-->
+  <link href="/static/css/style.min.css" rel="stylesheet" media="all">
+  <!-- Favicons -->
+  <link rel="icon" href="img/favicon.png" type="image/vnd.microsoft.icon">
 
-	<!-- jQuery library -->
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+  <!-- jQuery library -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 
-	<!-- Latest compiled JavaScript -->
-	<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+  <!-- Latest compiled JavaScript -->
+  <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 
-	<script>
-		function get_current_time_d() {
-			var today = new Date();
-			var dd = String(today.getDate()).padStart(2, '0');
-			var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
-			var yyyy = today.getFullYear();
+  <script>
+    function get_current_time_d() {
+      var today = new Date();
+      var dd = String(today.getDate()).padStart(2, '0');
+      var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+      var yyyy = today.getFullYear();
 
-			today = yyyy + '-' + mm + '-' + dd;
-			return today;
-		}
-		function get_current_time_h() {
-			var today = new Date();
-			var hh = today.getHours();
-			var mi = today.getMinutes();
-			var s = today.getSeconds();
+      today = yyyy + '-' + mm + '-' + dd;
+      return today;
+    }
 
-			today = hh + ':' + mi+':'+s;
-			return today;
-		}
-		function get_current_time() {
-			var today = new Date();
-			var dd = String(today.getDate()).padStart(2, '0');
-			var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
-			var yyyy = today.getFullYear();
-			var hh = today.getHours();
-			var mi = today.getMinutes();
-			var s = today.getSeconds();
+    function get_current_time_h() {
+      var today = new Date();
+      var hh = today.getHours();
+      var mi = today.getMinutes();
+      var s = today.getSeconds();
 
-			today = yyyy + '-' + mm + '-' + dd+ " " + hh + ':' + mi+':'+s;
-			return today;
-		}
-		$(document).ready(function () {
-			$("#btn_date_in").click(function(){
-				$("#date_in_h").val(get_current_time_h()+'');
-				$("#date_in_d").val(get_current_time_d()+'');
-			});
-			$( "#btn_time_heart_rate" ).click(function() {
-				$("#time_heart_rate").val(get_current_time()+'');
-			});
+      today = hh + ':' + mi + ':' + s;
+      return today;
+    }
 
-			$("#btn_time_pp").click(() => {
-				$("#time_pp").val(get_current_time()+'');
-			});
-		});
-	</script>
+    function get_current_time() {
+      var today = new Date();
+      var dd = String(today.getDate()).padStart(2, '0');
+      var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+      var yyyy = today.getFullYear();
+      var hh = today.getHours();
+      var mi = today.getMinutes();
+      var s = today.getSeconds();
+
+      today = yyyy + '-' + mm + '-' + dd + " " + hh + ':' + mi + ':' + s;
+      return today;
+    }
+    $(document).ready(function () {
+      $("#btn_date_in").click(function () {
+        $("#date_in_h").val(get_current_time_h() + '');
+        $("#date_in_d").val(get_current_time_d() + '');
+      });
+      $("#btn_time_heart_rate").click(function () {
+        $("#time_heart_rate").val(get_current_time() + '');
+      });
+
+      $("#btn_time_pp").click(() => {
+        $("#time_pp").val(get_current_time() + '');
+      });
+
+      $("#btn-logout").click(() => {
+        $.get("/doctor/signout");
+      })
+    });
+  </script>
 </head>
+
 <body id="top" class='top'>
-	<main id="wrap" class="wrap">
-		<div class="sidebar">
-			<a href="" class="item item--01 active"><p>DASHBOARD</p></a>
-			<a href="/doctor/input" class="item item--02"><p>THÊM BỆNH NHÂN</p></a>
-			<a href="/doctor/search" class="item item--03"><p>TRA CỨU THÔNG TIN<br>BỆNH NHÂN</p></a>
-			<a href="/doctor/add_date_out" class="item item--04"><p>CẬP NHẬT<br>NGÀY RA VIỆN</p></a>
-			<a href="/device" class="item item--05"><p>QUẢN LÝ THIẾT BỊ</p></a>
-			<div class="item"></div>
-			<div class="item"></div>
-		</div>
-		<div class="main">
-			<div class="nav">
-				<div class="nav__name">
-					<div class="img">
-						<img src="/static/img/user.png" alt="dd">
-					</div>
-					<p class="name"><%= data.doctor_name %></p>
-				</div>
-				<div class="nav__btn"><a href="/doctor/signout">LOGOUT</a></div>
-			</div>
-			<form method="POST" action="/doctor/input">
-				<div class="form">
-					<div class="wcm">
-						<% if (data.error){ %>
-                            <div id="login-alert" class="alert alert-danger col-sm-12"><%= data.error %></div>
-                        <%}%> 
+  <main id="wrap" class="wrap">
+    <div class="sidebar">
+      <a href="" class="item item--01 active">
+        <p>DASHBOARD</p>
+      </a>
+      <a href="/doctor/input" class="item item--02">
+        <p>THÊM BỆNH NHÂN</p>
+      </a>
+      <a href="/doctor/search" class="item item--03">
+        <p>TRA CỨU THÔNG TIN<br>BỆNH NHÂN</p>
+      </a>
+      <a href="/doctor/add_date_out" class="item item--04">
+        <p>CẬP NHẬT<br>NGÀY RA VIỆN</p>
+      </a>
+      <a href="/device" class="item item--05">
+        <p>QUẢN LÝ THIẾT BỊ</p>
+      </a>
+      <div class="item"></div>
+      <div class="item"></div>
+    </div>
+    <div class="main">
+      <div class="nav">
+        <div class="nav__name">
+          <div class="img">
+            <img src="/static/img/user.png" alt="dd">
+          </div>
+          <p class="name"><%= data.doctor_name %></p>
+        </div>
+        <button class="btn" id="btn-logout">LOGOUT</button>
+      </div>
+      <form method="POST" action="/doctor/input">
+        <div class="form">
+          <div class="wcm">
+            <% if (data.error){ %>
+            <div id="login-alert" class="alert alert-danger col-sm-12"><%= data.error %></div>
+            <%}%> 
 						<!-- THÔNG TIN BỆNH NHÂN -->
 						<p class="form__ttl"><em>THÔNG TIN BỆNH NHÂN</em></p>
 						<div class="row">
@@ -178,10 +195,10 @@
 								<p class="row__ttl pad">Mã thiết bị:</p>
 								<select id="device_id" name="device_id"> 
 									<% if (data.device_list){ %>
-										<% data.device_list.forEach(element => { %>
-											<option value="<%= element.id%>"><%= element.id%></option>
-										<%});%>
-									<%}%> 
+            <% data.device_list.forEach(element => { %>
+            <option value="<%= element.id%>"><%= element.id%></option>
+            <%});%>
+            <%}%> 
 								</select> 
 							</div>
 							<div class="btn" id="btn_time_pp">NGÀY GIỜ HIỆN TẠI</div>
