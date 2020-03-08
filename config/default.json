@@ -4,7 +4,7 @@
         "port": 3000
     },
     "mysql": {
-        "host": "mydatabase.c1vjyigk0gkh.us-east-2.rds.amazonaws.com",
+        "host": "db-instance.c1vjyigk0gkh.us-east-2.rds.amazonaws.com",
         "port": 3306,
         "database": "hospital",
         "user": "admin_root",
