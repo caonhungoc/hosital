@@ -7,9 +7,9 @@
         "host": "mydatabase.c1vjyigk0gkh.us-east-2.rds.amazonaws.com",
         "port": 3306,
         "database": "hospital",
-        "user": "admin_root",
-        "password": "admin_root_password"
+        "user": "ngoccao",
+        "password": "xxxxxxxngoccao"
     },
     "salt" : 10,
-    "secret_key": "secretkey"
+    "secret_key": "secretkeyngoccao"
 }
